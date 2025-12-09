@@ -1,6 +1,6 @@
-# Contributing to NuxtWP Multilang Theme
+# Contributing to Aaasaasa AI CMS NUXT
 
-Thank you for your interest in contributing to the NuxtWP Multilang Theme! This guide will help you get started with contributing to this modern Nuxt 4 multilingual WordPress-inspired theme.
+Thank you for your interest in contributing to the Aaasaasa AI CMS NUXT! This guide will help you get started with contributing to this modern Nuxt 4 multilingual WordPress-inspired theme.
 
 ## 🚀 Getting Started
 
@@ -435,6 +435,6 @@ Contributors are recognized in:
 
 ---
 
-**Thank you for contributing to NuxtWP Multilang Theme!**
+**Thank you for contributing to Aaasaasa AI CMS NUXT!**
 
 _Built with ❤️ by Aleksandar Stajic and the open source community_

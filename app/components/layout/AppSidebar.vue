@@ -280,7 +280,7 @@ const closeSidebarOnMobile = () => {
     <!-- Footer -->
     <div v-if="isOpen" class="shrink-0 p-4 border-t border-gray-200 dark:border-gray-800">
       <div class="text-xs text-gray-500 dark:text-gray-400 text-center">
-        <p>NuxtWP Theme</p>
+        <p>Aaasaasa AI CMS NUXT</p>
         <p>v{{ $config.public.version || '1.0.0' }}</p>
       </div>
     </div>

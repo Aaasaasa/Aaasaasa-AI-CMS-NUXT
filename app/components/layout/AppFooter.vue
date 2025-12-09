@@ -54,7 +54,7 @@ const footerContent: FooterContent = {
       links: [
         {
           label: 'GitHub',
-          href: 'https://github.com/Aaasaasa/nuxt-wp-multilang-theme',
+          href: 'https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT',
           external: true
         },
         { label: 'Demo', href: '/demo' },
@@ -70,7 +70,7 @@ const footerContent: FooterContent = {
         { label: 'Status', href: '/status' },
         {
           label: 'Report Issues',
-          href: 'https://github.com/Aaasaasa/nuxt-wp-multilang-theme/issues',
+          href: 'https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT/issues',
           external: true
         }
       ]

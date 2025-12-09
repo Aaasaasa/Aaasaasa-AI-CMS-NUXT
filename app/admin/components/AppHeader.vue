@@ -11,7 +11,7 @@ const { t } = useI18n()
     <UContainer class="flex items-center justify-between h-14">
       <!-- Left: Logo + main nav -->
       <div class="flex items-center gap-8">
-        <NuxtLink to="/" class="text-lg font-bold text-primary">Aaasaasa NuxtWP AI CMS</NuxtLink>
+        <NuxtLink to="/" class="text-lg font-bold text-primary">Aaasaasa AI CMS NUXT</NuxtLink>
         <nav class="hidden md:flex items-center gap-4 text-sm font-medium">
           <ULink to="/" active-class="text-primary font-semibold">{{ t('Home') }}</ULink>
           <ULink to="/about" active-class="text-primary font-semibold">{{ t('About') }}</ULink>

@@ -1,4 +1,4 @@
-# 🚀 NuxtWP Multilang CMS - Enterprise-Grade Production Platform
+# 🚀 Aaasaasa AI CMS NUXT - Enterprise-Grade Production Platform
 
 <div align="center">
 
@@ -1403,8 +1403,8 @@ This project was built **solo** but stands on the shoulders of giants:
 
 **Built with ❤️ and ☕ by [Aleksandar Stajic](https://github.com/Aaasaasa)**
 
-_NuxtWP Multilang CMS - Enterprise-Grade • Production-Ready • Solo-Developed_
+_Aaasaasa AI CMS NUXT - Enterprise-Grade • Production-Ready • Solo-Developed_
 
-**[↑ Back to Top](#-nuxtwp-multilang-cms---enterprise-grade-production-platform)**
+**[↑ Back to Top](#-aaasaasa-ai-cms-nuxt---enterprise-grade-production-platform)**
 
 </div>

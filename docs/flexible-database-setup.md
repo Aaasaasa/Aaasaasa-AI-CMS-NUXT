@@ -1,6 +1,6 @@
 # 🎯 Flexible Database Configuration
 
-> **KONZEPT-DOKUMENT**: Optionale Datenbank-Auswahl für NuxtWP CMS
+> **KONZEPT-DOKUMENT**: Optionale Datenbank-Auswahl für Aaasaasa AI CMS NUXT
 >
 > Dieses Dokument beschreibt eine **zukünftige Feature-Idee** für flexible Datenbank-Konfiguration.
 

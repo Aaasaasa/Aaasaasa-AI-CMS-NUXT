@@ -50,7 +50,7 @@
             <UButton
               color="neutral"
               variant="ghost"
-              to="https://github.com/Aaasaasa/nuxt-wp-multilang-theme"
+              to="https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT"
               target="_blank"
               icon="i-simple-icons-github"
               aria-label="GitHub"

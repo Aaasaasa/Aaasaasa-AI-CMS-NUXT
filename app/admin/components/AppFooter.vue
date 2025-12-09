@@ -8,7 +8,7 @@ const year = new Date().getFullYear()
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <!-- Left: Branding & Copy -->
         <div class="flex flex-col gap-2 text-sm text-muted-foreground">
-          <span class="font-semibold text-foreground">NuxtWP Admin</span>
+          <span class="font-semibold text-foreground">Aaasaasa AI CMS NUXT Admin</span>
           <span
             >© {{ year }}
             <a
@@ -33,7 +33,7 @@ const year = new Date().getFullYear()
         <!-- Right: Social & Links -->
         <div class="flex items-center gap-4">
           <a
-            href="https://github.com/Aaasaasa/nuxt-wp-multilang-theme"
+            href="https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"

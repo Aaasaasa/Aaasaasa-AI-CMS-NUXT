@@ -1,4 +1,4 @@
-# 📄 NuxtWP Multilang CMS - One-Page Summary
+# 📄 Aaasaasa AI CMS NUXT - One-Page Summary
 
 **For Decision Makers, CTOs, and Technical Leads**
 
@@ -175,23 +175,23 @@ export default defineNitroPlugin((nitroApp) => {
 ### **Quick Start** (5 minutes):
 
 ```bash
-git clone https://github.com/Aaasaasa/nuxt-wp-multilang-theme.git
-cd nuxt-wp-multilang-theme
+git clone https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT.git
+cd Aaasaasa-AI-CMS-NUXT
 docker compose up -d postgres redis
 yarn install && yarn prisma:generate && yarn dev
 ```
 
 ### **Learn More**:
 
-- 📖 **Documentation**: [docs/](https://github.com/Aaasaasa/nuxt-wp-multilang-theme/tree/main/docs)
-- 🎬 **Live Demo**: [docs/DEMO.md](https://github.com/Aaasaasa/nuxt-wp-multilang-theme/blob/main/docs/DEMO.md)
-- 💼 **Business Case**: [docs/BUSINESS-PITCH.md](https://github.com/Aaasaasa/nuxt-wp-multilang-theme/blob/main/docs/BUSINESS-PITCH.md)
+- 📖 **Documentation**: [docs/](https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT/tree/master/docs)
+- 🎬 **Live Demo**: [docs/DEMO.md](https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT/blob/master/docs/DEMO.md)
+- 💼 **Business Case**: [docs/BUSINESS-PITCH.md](https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT/blob/master/docs/BUSINESS-PITCH.md)
 
 ### **Contact**:
 
 📧 **Email**: Via [GitHub @Aaasaasa](https://github.com/Aaasaasa)  
-💬 **Discuss**: [GitHub Discussions](https://github.com/Aaasaasa/nuxt-wp-multilang-theme/discussions)  
-⭐ **Star**: Show support on [GitHub](https://github.com/Aaasaasa/nuxt-wp-multilang-theme)
+💬 **Discuss**: [GitHub Discussions](https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT/discussions)  
+⭐ **Star**: Show support on [GitHub](https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT)
 
 ---
 
@@ -209,4 +209,4 @@ yarn install && yarn prisma:generate && yarn dev
 
 _Enterprise-Grade • Production-Ready • Solo-Developed_
 
-**[View Full README](https://github.com/Aaasaasa/nuxt-wp-multilang-theme#readme)**
+**[View Full README](https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT#readme)**

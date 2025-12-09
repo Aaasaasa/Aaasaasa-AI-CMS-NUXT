@@ -1,5 +1,5 @@
 // prisma/seed-data/postgres-seed.ts
-// PostgreSQL CMS Seed Data for NuxtWP Multilang Theme
+// PostgreSQL CMS Seed Data for Aaasaasa AI CMS NUXT
 
 import { PrismaClient as PostgresCMSClient } from '../generated/postgres-cms'
 import seedRBAC from './rbac-seed'
@@ -148,15 +148,15 @@ async function seedPostgresCMS() {
     // Create sample articles
     const _article1 = await prismaCMS.article.create({
       data: {
-        slug: 'welcome-to-nuxtwo-multilang-theme',
+        slug: 'welcome-to-aaasaasa-ai-cms-nuxt',
         status: 'PUBLISHED',
         authorId: authorUser.id,
         translations: {
           create: [
             {
               lang: 'en',
-              title: 'Welcome to NuxtWP Multilang Theme',
-              content: `# Welcome to NuxtWP Multilang Theme
+              title: 'Welcome to Aaasaasa AI CMS NUXT',
+              content: `# Welcome to Aaasaasa AI CMS NUXT
 
 This is a modern, multilingual WordPress-inspired theme built with Nuxt 4. Features include:
 
@@ -175,12 +175,12 @@ This theme represents the pinnacle of modern web development, combining the best
 
 Built with ❤️ using modern technologies and best practices.`,
               excerpt:
-                'Introduction to the NuxtWP Multilang Theme - a modern multilingual CMS built with Nuxt 4.'
+                'Introduction to the Aaasaasa AI CMS NUXT - a modern multilingual CMS built with Nuxt 4.'
             },
             {
               lang: 'de',
-              title: 'Willkommen beim NuxtWP Multilang Theme',
-              content: `# Willkommen beim NuxtWP Multilang Theme
+              title: 'Willkommen beim Aaasaasa AI CMS NUXT',
+              content: `# Willkommen beim Aaasaasa AI CMS NUXT
 
 Dies ist ein modernes, mehrsprachiges WordPress-inspiriertes Theme, das mit Nuxt 4 entwickelt wurde.
 
@@ -197,12 +197,12 @@ Dies ist ein modernes, mehrsprachiges WordPress-inspiriertes Theme, das mit Nuxt
 
 Dieses Theme repräsentiert den Höhepunkt moderner Webentwicklung und kombiniert das Beste von Nuxt.js mit WordPress-ähnlichen Content-Management-Fähigkeiten.`,
               excerpt:
-                'Einführung in das NuxtWP Multilang Theme - ein modernes mehrsprachiges CMS mit Nuxt 4.'
+                'Einführung in das Aaasaasa AI CMS NUXT - ein modernes mehrsprachiges CMS mit Nuxt 4.'
             },
             {
               lang: 'sr',
-              title: 'Dobrodošli u NuxtWP Multilang Theme',
-              content: `# Dobrodošli u NuxtWP Multilang Theme
+              title: 'Dobrodošli u Aaasaasa AI CMS NUXT',
+              content: `# Dobrodošli u Aaasaasa AI CMS NUXT
 
 Ovo je moderna, višejezična tema inspirisana WordPress-om, razvijena sa Nuxt 4.
 
@@ -219,7 +219,7 @@ Ovo je moderna, višejezična tema inspirisana WordPress-om, razvijena sa Nuxt 4
 
 Ova tema predstavlja vrh moderne web razvojačke arhitekture.`,
               excerpt:
-                'Uvod u NuxtWP Multilang Theme - moderan višejezični CMS napravljen sa Nuxt 4.'
+                'Uvod u Aaasaasa AI CMS NUXT - moderan višejezični CMS napravljen sa Nuxt 4.'
             }
           ]
         },
@@ -238,10 +238,10 @@ Ova tema predstavlja vrh moderne web razvojačke arhitekture.`,
           create: [
             {
               lang: 'en',
-              title: 'Multi-Database Architecture in NuxtWP',
+              title: 'Multi-Database Architecture in Aaasaasa AI CMS NUXT',
               content: `# Multi-Database Architecture
 
-The NuxtWP theme uses a sophisticated multi-database architecture:
+The Aaasaasa AI CMS NUXT uses a sophisticated multi-database architecture:
 
 ## Database Responsibilities
 
@@ -264,14 +264,14 @@ The NuxtWP theme uses a sophisticated multi-database architecture:
 - Search analytics
 
 This architecture provides optimal performance and scalability while maintaining WordPress compatibility.`,
-              excerpt: 'Learn about the multi-database architecture powering NuxtWP theme.'
+              excerpt: 'Learn about the multi-database architecture powering Aaasaasa AI CMS NUXT.'
             },
             {
               lang: 'de',
-              title: 'Multi-Datenbank-Architektur in NuxtWP',
+              title: 'Multi-Datenbank-Architektur in Aaasaasa AI CMS NUXT',
               content: `# Multi-Datenbank-Architektur
 
-Das NuxtWP-Theme verwendet eine ausgeklügelte Multi-Datenbank-Architektur:
+Das Aaasaasa AI CMS NUXT verwendet eine ausgeklügelte Multi-Datenbank-Architektur:
 
 ## Datenbank-Zuständigkeiten
 
@@ -294,7 +294,7 @@ Das NuxtWP-Theme verwendet eine ausgeklügelte Multi-Datenbank-Architektur:
 - Such-Analytics
 
 Diese Architektur bietet optimale Performance und Skalierbarkeit bei gleichzeitiger WordPress-Kompatibilität.`,
-              excerpt: 'Erfahren Sie mehr über die Multi-Datenbank-Architektur des NuxtWP-Themes.'
+              excerpt: 'Erfahren Sie mehr über die Multi-Datenbank-Architektur des Aaasaasa AI CMS NUXT.'
             }
           ]
         },
@@ -314,10 +314,10 @@ Diese Architektur bietet optimale Performance und Skalierbarkeit bei gleichzeiti
           create: [
             {
               lang: 'en',
-              title: 'About NuxtWP Multilang Theme',
-              content: `# About NuxtWP Multilang Theme
+              title: 'About Aaasaasa AI CMS NUXT',
+              content: `# About Aaasaasa AI CMS NUXT
 
-Created by **Aleksandar Stajic**, the NuxtWP Multilang Theme represents the next generation of web development frameworks.
+Created by **Aleksandar Stajic**, the Aaasaasa AI CMS NUXT represents the next generation of web development frameworks.
 
 ## Vision
 
@@ -334,14 +334,14 @@ To bridge the gap between modern JavaScript frameworks and traditional content m
 ## Contact
 
 For inquiries about the theme, please visit our GitHub repository or contact the development team.`,
-              excerpt: 'Learn about the vision and technology behind NuxtWP Multilang Theme.'
+              excerpt: 'Learn about the vision and technology behind Aaasaasa AI CMS NUXT.'
             },
             {
               lang: 'de',
-              title: 'Über NuxtWP Multilang Theme',
-              content: `# Über NuxtWP Multilang Theme
+              title: 'Über Aaasaasa AI CMS NUXT',
+              content: `# Über Aaasaasa AI CMS NUXT
 
-Erstellt von **Aleksandar Stajic**, repräsentiert das NuxtWP Multilang Theme die nächste Generation von Web-Entwicklungs-Frameworks.
+Erstellt von **Aleksandar Stajic**, repräsentiert das Aaasaasa AI CMS NUXT die nächste Generation von Web-Entwicklungs-Frameworks.
 
 ## Vision
 
@@ -359,7 +359,7 @@ Die Lücke zwischen modernen JavaScript-Frameworks und traditionellen Content-Ma
 
 Für Anfragen zum Theme besuchen Sie bitte unser GitHub-Repository oder kontaktieren Sie das Entwicklungsteam.`,
               excerpt:
-                'Erfahren Sie mehr über die Vision und Technologie hinter dem NuxtWP Multilang Theme.'
+                'Erfahren Sie mehr über die Vision und Technologie hinter dem Aaasaasa AI CMS NUXT.'
             }
           ]
         }
@@ -376,10 +376,10 @@ Für Anfragen zum Theme besuchen Sie bitte unser GitHub-Repository oder kontakti
           create: [
             {
               lang: 'en',
-              title: 'NuxtWP Theme Showcase',
-              content: `# NuxtWP Theme Portfolio
+              title: 'Aaasaasa AI CMS NUXT Showcase',
+              content: `# Aaasaasa AI CMS NUXT Portfolio
 
-A comprehensive showcase of the NuxtWP Multilang Theme capabilities:
+A comprehensive showcase of the Aaasaasa AI CMS NUXT capabilities:
 
 ## Features Demonstrated
 
@@ -401,7 +401,7 @@ A comprehensive showcase of the NuxtWP Multilang Theme capabilities:
 ## Results
 
 A production-ready, multilingual CMS that combines modern development practices with user-friendly content management.`,
-              excerpt: 'Comprehensive showcase of NuxtWP theme capabilities and features.'
+              excerpt: 'Comprehensive showcase of Aaasaasa AI CMS NUXT capabilities and features.'
             }
           ]
         }
@@ -420,8 +420,8 @@ A production-ready, multilingual CMS that combines modern development practices 
           create: [
             {
               lang: 'en',
-              title: 'NuxtWP Pro License',
-              description: `Professional license for the NuxtWP Multilang Theme including:
+              title: 'Aaasaasa AI CMS NUXT Pro License',
+              description: `Professional license for the Aaasaasa AI CMS NUXT including:
 
 - Commercial use rights
 - Premium support
@@ -431,8 +431,8 @@ A production-ready, multilingual CMS that combines modern development practices 
             },
             {
               lang: 'de',
-              title: 'NuxtWP Pro Lizenz',
-              description: `Professionelle Lizenz für das NuxtWP Multilang Theme inklusive:
+              title: 'Aaasaasa AI CMS NUXT Pro Lizenz',
+              description: `Professionelle Lizenz für das Aaasaasa AI CMS NUXT inklusive:
 
 - Kommerzielle Nutzungsrechte
 - Premium Support
@@ -459,9 +459,9 @@ A production-ready, multilingual CMS that combines modern development practices 
         {
           key: 'site_title',
           value: {
-            en: 'NuxtWP Multilang Theme',
-            de: 'NuxtWP Multilang Theme',
-            sr: 'NuxtWP Multilang Tema'
+            en: 'Aaasaasa AI CMS NUXT',
+            de: 'Aaasaasa AI CMS NUXT',
+            sr: 'Aaasaasa AI CMS NUXT'
           }
         },
         {

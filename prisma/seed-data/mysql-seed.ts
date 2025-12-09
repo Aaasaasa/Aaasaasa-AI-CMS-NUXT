@@ -113,7 +113,7 @@ async function seedMySQLWordPress() {
         post_date: new Date(),
         post_date_gmt: new Date(),
         post_content: `<!-- wp:heading -->
-<h2>Welcome to NuxtWP Multilang Theme</h2>
+<h2>Welcome to Aaasaasa AI CMS NUXT</h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
@@ -146,9 +146,9 @@ async function seedMySQLWordPress() {
 <!-- wp:paragraph -->
 <p>Built with ❤️ using modern technologies and best practices.</p>
 <!-- /wp:paragraph -->`,
-        post_title: 'Welcome to NuxtWP Multilang Theme',
+        post_title: 'Welcome to Aaasaasa AI CMS NUXT',
         post_excerpt:
-          'Introduction to the NuxtWP Multilang Theme - a modern multilingual CMS built with Nuxt 4.',
+          'Introduction to the Aaasaasa AI CMS NUXT - a modern multilingual CMS built with Nuxt 4.',
         post_status: 'publish',
         comment_status: 'open',
         ping_status: 'open',
@@ -174,11 +174,11 @@ async function seedMySQLWordPress() {
         post_date: new Date(),
         post_date_gmt: new Date(),
         post_content: `<!-- wp:heading -->
-<h2>Multi-Database Architecture in NuxtWP</h2>
+<h2>Multi-Database Architecture in Aaasaasa AI CMS NUXT</h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>The NuxtWP theme uses a sophisticated multi-database architecture:</p>
+<p>The Aaasaasa AI CMS NUXT uses a sophisticated multi-database architecture:</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
@@ -227,8 +227,8 @@ async function seedMySQLWordPress() {
 <!-- wp:paragraph -->
 <p>This architecture provides optimal performance and scalability while maintaining WordPress compatibility.</p>
 <!-- /wp:paragraph -->`,
-        post_title: 'Multi-Database Architecture in NuxtWP',
-        post_excerpt: 'Learn about the multi-database architecture powering NuxtWP theme.',
+        post_title: 'Multi-Database Architecture in Aaasaasa AI CMS NUXT',
+        post_excerpt: 'Learn about the multi-database architecture powering Aaasaasa AI CMS NUXT.',
         post_status: 'publish',
         comment_status: 'open',
         ping_status: 'open',
@@ -255,11 +255,11 @@ async function seedMySQLWordPress() {
         post_date: new Date(),
         post_date_gmt: new Date(),
         post_content: `<!-- wp:heading -->
-<h2>About NuxtWP Multilang Theme</h2>
+<h2>About Aaasaasa AI CMS NUXT</h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>Created by <strong>Aleksandar Stajic</strong>, the NuxtWP Multilang Theme represents the next generation of web development frameworks.</p>
+<p>Created by <strong>Aleksandar Stajic</strong>, the Aaasaasa AI CMS NUXT represents the next generation of web development frameworks.</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:heading {"level":3} -->
@@ -291,8 +291,8 @@ async function seedMySQLWordPress() {
 <!-- wp:paragraph -->
 <p>For inquiries about the theme, please visit our GitHub repository or contact the development team.</p>
 <!-- /wp:paragraph -->`,
-        post_title: 'About NuxtWP Multilang Theme',
-        post_excerpt: 'Learn about the vision and technology behind NuxtWP Multilang Theme.',
+        post_title: 'About Aaasaasa AI CMS NUXT',
+        post_excerpt: 'Learn about the vision and technology behind Aaasaasa AI CMS NUXT.',
         post_status: 'publish',
         comment_status: 'closed',
         ping_status: 'closed',
@@ -317,7 +317,7 @@ async function seedMySQLWordPress() {
       data: [
         { option_name: 'siteurl', option_value: 'http://localhost', autoload: 'yes' },
         { option_name: 'home', option_value: 'http://localhost', autoload: 'yes' },
-        { option_name: 'blogname', option_value: 'NuxtWP Multilang Theme', autoload: 'yes' },
+        { option_name: 'blogname', option_value: 'Aaasaasa AI CMS NUXT', autoload: 'yes' },
         {
           option_name: 'blogdescription',
           option_value: 'Modern multilingual WordPress-inspired theme',

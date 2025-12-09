@@ -1,4 +1,4 @@
-# WordPress Migration zu NuxtWP
+# WordPress Migration zu Aaasaasa AI CMS NUXT
 
 > 🚨 **KRITISCHE WARNUNG - NUR FÜR EXPERTEN**
 >
@@ -23,7 +23,7 @@
 >
 > **Support:** Dieses Tool wird "as-is" bereitgestellt. Keine Support-Garantie für Migrations-Probleme.
 
-Dokumentation für die Migration von WordPress-Daten zu PostgreSQL im NuxtWP Multilang Theme.
+Dokumentation für die Migration von WordPress-Daten zu PostgreSQL im Aaasaasa AI CMS NUXT.
 
 ## 🚀 Quick Start Migration
 
@@ -145,18 +145,18 @@ Das Bereinigungsskript entfernt automatisch:
 
 ### Benutzer-Rollen Mapping
 
-| WordPress Capability   | NuxtWP Role  | Beschreibung       |
-| ---------------------- | ------------ | ------------------ |
-| Erster Benutzer (ID=1) | `SUPERADMIN` | Vollzugriff        |
-| Andere Benutzer        | `AUTHOR`     | Content-Erstellung |
+| WordPress Capability   | Aaasaasa AI CMS NUXT Role | Beschreibung       |
+| ---------------------- | ------------------------- | ------------------ |
+| Erster Benutzer (ID=1) | `SUPERADMIN`              | Vollzugriff        |
+| Andere Benutzer        | `AUTHOR`                  | Content-Erstellung |
 
 ### Post-Status Mapping
 
-| WordPress | NuxtWP      | Beschreibung   |
-| --------- | ----------- | -------------- |
-| `publish` | `PUBLISHED` | Veröffentlicht |
-| `draft`   | `DRAFT`     | Entwurf        |
-| `private` | `ARCHIVED`  | Archiviert     |
+| WordPress | Aaasaasa AI CMS NUXT | Beschreibung   |
+| --------- | -------------------- | -------------- |
+| `publish` | `PUBLISHED`          | Veröffentlicht |
+| `draft`   | `DRAFT`              | Entwurf        |
+| `private` | `ARCHIVED`           | Archiviert     |
 
 ## 🛠️ Erweiterte Nutzung
 

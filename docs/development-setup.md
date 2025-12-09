@@ -72,7 +72,7 @@ ERROR [unhandledRejection] EACCES: permission denied, watch '/path/to/data/mysql
 Automatische **Data Directory Isolation**:
 
 1. **Detection**: Script erkennt MySQL Permission-Probleme
-2. **Isolation**: Verschiebt `data/` nach `/srv/proj/nuxt-wp-multilang-theme-data`
+2. **Isolation**: Verschiebt `data/` nach `/srv/proj/aaasaasa-ai-cms-nuxt-data`
 3. **Symlink**: Erstellt symlink `data/` → isoliertes Verzeichnis
 4. **Watch Exclusion**: Nuxt File Watcher ignoriert isolierte Daten
 
@@ -91,7 +91,7 @@ project/
 └── nuxt.config.ts
 
 # Isolated Location
-/srv/proj/nuxt-wp-multilang-theme-data/
+/srv/proj/aaasaasa-ai-cms-nuxt-data/
 └── mysql/               # Same files, outside watch scope
 ```
 

@@ -1,6 +1,6 @@
 # 🧩 Component Architecture
 
-Modern Vue 3 Composition API components with Nuxt UI integration, featuring responsive layout system and professional component patterns for the NuxtWP Multilang Theme.
+Modern Vue 3 Composition API components with Nuxt UI integration, featuring responsive layout system and professional component patterns for the Aaasaasa AI CMS NUXT.
 
 ## 🏗️ Component Structure
 
@@ -146,7 +146,7 @@ const toggleSidebar = () => (sidebarOpen.value = !sidebarOpen.value)
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- About Section -->
         <div class="md:col-span-2">
-          <h3 class="text-lg font-semibold mb-4">About NuxtWP</h3>
+          <h3 class="text-lg font-semibold mb-4">About Aaasaasa AI CMS NUXT</h3>
           <p class="text-gray-600 dark:text-gray-300 mb-4">
             A modern multilingual WordPress-inspired theme built with Nuxt 4.
           </p>

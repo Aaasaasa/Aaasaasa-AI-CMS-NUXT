@@ -56,8 +56,9 @@ services:
     ports:
       - "5432:5432" # 👈 host=5432, container=5432
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
-      - ./.docker/postgres/init:/docker-entrypoint-initdb.d
+      - /srv/projekte/Aaasaasa-AI-CMS-NUXT/.docker/postgres/data:/var/lib/postgresql/data
+      - /srv/projekte/Aaasaasa-AI-CMS-NUXT/dumps/init_postgres.sql:/docker-entrypoint-initdb.d/00-init.sql
+      - /srv/projekte/Aaasaasa-AI-CMS-NUXT/dumps/postgres:/docker-entrypoint-initdb.d/
 
   # ========= MySQL (OPTIONAL - Only for WordPress Migration) =========
 

@@ -1,6 +1,6 @@
 # 🎨 Layout System Architecture
 
-Modern responsive layout system for the NuxtWP Multilang Theme, featuring AppSidebar and AppFooter components with mobile-first design patterns.
+Modern responsive layout system for the Aaasaasa AI CMS NUXT, featuring AppSidebar and AppFooter components with mobile-first design patterns.
 
 ## 🏗️ Layout Component Overview
 
@@ -561,4 +561,4 @@ const navigationItems = computed(() => {
 
 ---
 
-**Layout System Summary**: The NuxtWP theme's layout system provides a modern, responsive, and accessible foundation with professional sidebar navigation and footer components. The architecture supports theming, internationalization, and role-based navigation while maintaining excellent performance and user experience across all devices.
+**Layout System Summary**: The Aaasaasa AI CMS NUXT layout system provides a modern, responsive, and accessible foundation with professional sidebar navigation and footer components. The architecture supports theming, internationalization, and role-based navigation while maintaining excellent performance and user experience across all devices.

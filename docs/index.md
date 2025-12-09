@@ -1,6 +1,6 @@
-# 📖 NuxtWP Multilang Theme - Documentation
+# 📖 Aaasaasa AI CMS NUXT - Documentation
 
-Comprehensive implementation guide and advanced usage patterns for the NuxtWP Multilang Theme by **Aleksandar Stajic**.
+Comprehensive implementation guide and advanced usage patterns for the Aaasaasa AI CMS NUXT by **Aleksandar Stajic**.
 
 > For quick setup and basic commands, see [README.md](../README.md) and [CLAUDE.md](../CLAUDE.md)
 

@@ -1,8 +1,8 @@
-# CLAUDE.md - NuxtWP Multilang Theme
+# CLAUDE.md - Aaasaasa AI CMS NUXT
 
 ## Project Overview
 
-**NuxtWP Multilang Theme v1.0.0** - A modern, production-ready WordPress-inspired theme built with Nuxt 4, featuring advanced multi-database architecture and comprehensive multilingual support. Created by **Aleksandar Stajic**.
+**Aaasaasa AI CMS NUXT v1.0.0** - A modern, production-ready WordPress-inspired theme built with Nuxt 4, featuring advanced multi-database architecture and comprehensive multilingual support. Created by **Aleksandar Stajic**.
 
 ### Core Technologies
 
@@ -231,7 +231,7 @@ CSP_REPORT_URI="https://yourdomain.com/csp-report"
 NUXT_PUBLIC_SITE_URL="https://yourdomain.com"
 
 # Site metadata
-NUXT_PUBLIC_SITE_NAME="NuxtWP Multilang Theme"
+NUXT_PUBLIC_SITE_NAME="Aaasaasa AI CMS NUXT"
 NUXT_PUBLIC_SITE_DESCRIPTION="Modern multilingual WordPress-inspired theme"
 ```
 

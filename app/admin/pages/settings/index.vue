@@ -4,6 +4,6 @@
       <PreferencesControls />
     </UContainer>
 
-    <p>Settings © {{ new Date().getFullYear() }} NuxtWP Stajic Aleksandar</p>
+    <p>Settings © {{ new Date().getFullYear() }} Aaasaasa AI CMS NUXT Stajic Aleksandar</p>
   </article>
 </template>

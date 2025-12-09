@@ -37,9 +37,9 @@ _Mobile-first design, perfect on all devices_
 
 A live demo instance will be available at:
 
-- **Frontend**: `https://demo.nuxtwp-cms.dev`
-- **Admin**: `https://demo.nuxtwp-cms.dev/admin`
-- **API Docs**: `https://demo.nuxtwp-cms.dev/api/docs`
+- **Frontend**: `https://demo.aaasaasa-ai-cms-nuxt.dev`
+- **Admin**: `https://demo.aaasaasa-ai-cms-nuxt.dev/admin`
+- **API Docs**: `https://demo.aaasaasa-ai-cms-nuxt.dev/api/docs`
 
 **Test Credentials** (when available):
 
@@ -68,8 +68,8 @@ Planned video content:
 **Local Installation** (5 minutes):
 
 ```bash
-git clone https://github.com/Aaasaasa/nuxt-wp-multilang-theme.git
-cd nuxt-wp-multilang-theme
+git clone https://github.com/Aaasaasa/Aaasaasa-AI-CMS-NUXT.git
+cd Aaasaasa-AI-CMS-NUXT
 docker compose up -d postgres redis
 yarn install
 yarn prisma:generate
