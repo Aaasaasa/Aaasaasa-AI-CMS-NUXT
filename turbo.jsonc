@@ -1,0 +1,10 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "tasks": {
+    "dev": { "cache": false, "persistent": true },
+    "build": { "dependsOn": ["^build"], "outputs": ["dist/**", ".output/**"] },
+    "lint": { "outputs": [], "cache": false },
+    "test": { "outputs": ["coverage/**"] },
+    "postinstall": {}
+  }
+}

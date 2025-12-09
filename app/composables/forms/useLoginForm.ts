@@ -1,0 +1,52 @@
+import { z } from 'zod'
+import type { LoginData } from '../../../shared/models/user'
+import { initialLoginState } from '../../../shared/models/user'
+import { TEXT_FIELD_LIMITS, VALIDATION_PATTERNS } from '../../../shared/constants/validation'
+
+export const useLoginForm = () => {
+  const { t } = useI18n()
+
+  const state = reactive<LoginData>({ ...initialLoginState })
+
+  const setState = (data: Partial<LoginData> | null) => {
+    if (!data) return
+    Object.assign(state, data)
+  }
+
+  const resetState = () => {
+    Object.assign(state, { ...initialLoginState })
+  }
+
+  const schema = computed(() =>
+    z.object({
+      email: z
+        .string()
+        .min(1, t('auth.login.email.validation.required'))
+        .refine((val) => VALIDATION_PATTERNS.EMAIL.test(val), {
+          message: t('auth.login.email.validation.invalid')
+        })
+        .max(TEXT_FIELD_LIMITS.EMAIL.MAX, t('auth.login.email.validation.maxLength')),
+      password: z
+        .string()
+        .min(1, t('auth.login.password.validation.required'))
+        .min(TEXT_FIELD_LIMITS.PASSWORD.MIN, t('auth.login.password.validation.minLength'))
+        .max(TEXT_FIELD_LIMITS.PASSWORD.MAX, t('auth.login.password.validation.maxLength'))
+    })
+  )
+
+  const isValid = computed(() => {
+    const result = schema.value.safeParse(state)
+    return result.success
+  })
+
+  const validate = () => schema.value.safeParse(state)
+
+  return {
+    state,
+    setState,
+    resetState,
+    schema,
+    isValid,
+    validate
+  }
+}

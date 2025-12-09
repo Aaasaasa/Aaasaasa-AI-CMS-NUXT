@@ -1,0 +1,522 @@
+// prisma/adapters/schema-mysql.prisma
+generator mysql {
+  provider = "prisma-client-js"
+  //previewFeatures = ["postgresqlExtensions"]
+  // output   = "../../node_modules/.prisma/mysql"
+  output   = "../generated/mysql"
+}
+
+datasource mysql {
+  provider = "mysql"
+  url      = env("MYSQL_URL")
+}
+
+model as_actionscheduler_actions {
+  action_id            BigInt    @id @default(autoincrement()) @mysql.UnsignedBigInt
+  hook                 String
+  status               String    @mysql.VarChar(20)
+  scheduled_date_gmt   DateTime? @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  scheduled_date_local DateTime? @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  args                 String?
+  schedule             String?   @mysql.LongText
+  group_id             BigInt    @default(0) @mysql.UnsignedBigInt
+  attempts             Int       @default(0)
+  last_attempt_gmt     DateTime? @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  last_attempt_local   DateTime? @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  claim_id             BigInt    @default(0) @mysql.UnsignedBigInt
+  extended_args        String?   @mysql.VarChar(8000)
+  priority             Int       @default(10) @mysql.UnsignedTinyInt
+
+  @@index([args], map: "args")
+  @@index([claim_id, status, scheduled_date_gmt], map: "claim_id_status_scheduled_date_gmt")
+  @@index([group_id], map: "group_id")
+  @@index([hook], map: "hook")
+  @@index([last_attempt_gmt], map: "last_attempt_gmt")
+  @@index([scheduled_date_gmt], map: "scheduled_date_gmt")
+  @@index([status], map: "status")
+}
+
+model as_actionscheduler_claims {
+  claim_id         BigInt    @id @default(autoincrement()) @mysql.UnsignedBigInt
+  date_created_gmt DateTime? @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+
+  @@index([date_created_gmt], map: "date_created_gmt")
+}
+
+model as_actionscheduler_groups {
+  group_id BigInt @id @default(autoincrement()) @mysql.UnsignedBigInt
+  slug     String @mysql.VarChar(255)
+
+  @@index([slug(length: 191)], map: "slug")
+}
+
+model as_actionscheduler_logs {
+  log_id         BigInt    @id @default(autoincrement()) @mysql.UnsignedBigInt
+  action_id      BigInt    @mysql.UnsignedBigInt
+  message        String    @mysql.Text
+  log_date_gmt   DateTime? @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  log_date_local DateTime? @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+
+  @@index([action_id], map: "action_id")
+  @@index([log_date_gmt], map: "log_date_gmt")
+}
+
+model as_awb_critical_css {
+  id               BigInt @id @unique(map: "id") @default(autoincrement())
+  css_key          String @mysql.VarChar(255)
+  mobile_css       String @mysql.LongText
+  desktop_css      String @mysql.LongText
+  mobile_preloads  String @mysql.LongText
+  desktop_preloads String @mysql.LongText
+  updated_at       String @mysql.VarChar(25)
+}
+
+model as_cli_cookie_scan {
+  id_cli_cookie_scan Int    @id @default(autoincrement())
+  status             Int    @default(0)
+  created_at         Int    @default(0)
+  total_url          Int    @default(0)
+  total_cookies      Int    @default(0)
+  current_action     String @mysql.VarChar(50)
+  current_offset     Int    @default(0)
+}
+
+model as_cli_cookie_scan_categories {
+  id_cli_cookie_category          Int                          @id @default(autoincrement())
+  cli_cookie_category_name        String                       @unique(map: "cookie") @mysql.VarChar(100)
+  cli_cookie_category_description String?                      @mysql.Text
+  as_cli_cookie_scan_cookies      as_cli_cookie_scan_cookies[]
+}
+
+model as_cli_cookie_scan_cookies {
+  id_cli_cookie_scan_cookies    Int                           @id @default(autoincrement())
+  id_cli_cookie_scan            Int                           @default(0)
+  id_cli_cookie_scan_url        Int                           @default(0)
+  cookie_id                     String                        @mysql.VarChar(255)
+  expiry                        String                        @mysql.VarChar(255)
+  type                          String                        @mysql.VarChar(255)
+  category                      String                        @mysql.VarChar(255)
+  category_id                   Int
+  description                   String?                       @mysql.Text
+  as_cli_cookie_scan_categories as_cli_cookie_scan_categories @relation(fields: [category_id], references: [id_cli_cookie_category], onDelete: NoAction, onUpdate: NoAction, map: "as_cli_cookie_scan_cookies_ibfk_1")
+
+  @@unique([id_cli_cookie_scan, cookie_id], map: "cookie")
+  @@index([category_id], map: "category_id")
+}
+
+model as_cli_cookie_scan_url {
+  id_cli_cookie_scan_url Int    @id @default(autoincrement())
+  id_cli_cookie_scan     Int    @default(0)
+  url                    String @mysql.Text
+  scanned                Int    @default(0)
+  total_cookies          Int    @default(0)
+}
+
+model as_cli_scripts {
+  id                    Int    @id @default(autoincrement())
+  cliscript_title       String @mysql.Text
+  cliscript_category    String @mysql.VarChar(100)
+  cliscript_type        Int?   @default(0)
+  cliscript_status      String @mysql.VarChar(100)
+  cliscript_description String @mysql.LongText
+  cliscript_key         String @mysql.VarChar(100)
+  type                  Int    @default(0)
+}
+
+model as_commentmeta {
+  meta_id    BigInt  @id @default(autoincrement()) @mysql.UnsignedBigInt
+  comment_id BigInt  @default(0) @mysql.UnsignedBigInt
+  meta_key   String? @mysql.VarChar(255)
+  meta_value String? @mysql.LongText
+
+  @@index([comment_id], map: "comment_id")
+  @@index([meta_key(length: 191)], map: "meta_key")
+}
+
+model as_comments {
+  comment_ID           BigInt   @id @default(autoincrement()) @mysql.UnsignedBigInt
+  comment_post_ID      BigInt   @default(0) @mysql.UnsignedBigInt
+  comment_author       String   @mysql.TinyText
+  comment_author_email String   @default("") @mysql.VarChar(100)
+  comment_author_url   String   @default("") @mysql.VarChar(200)
+  comment_author_IP    String   @default("") @mysql.VarChar(100)
+  comment_date         DateTime @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  comment_date_gmt     DateTime @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  comment_content      String   @mysql.Text
+  comment_karma        Int      @default(0)
+  comment_approved     String   @default("1") @mysql.VarChar(20)
+  comment_agent        String   @default("") @mysql.VarChar(255)
+  comment_type         String   @default("comment") @mysql.VarChar(20)
+  comment_parent       BigInt   @default(0) @mysql.UnsignedBigInt
+  user_id              BigInt   @default(0) @mysql.UnsignedBigInt
+
+  @@index([comment_approved, comment_date_gmt], map: "comment_approved_date_gmt")
+  @@index([comment_author_email(length: 10)], map: "comment_author_email")
+  @@index([comment_date_gmt], map: "comment_date_gmt")
+  @@index([comment_parent], map: "comment_parent")
+  @@index([comment_post_ID], map: "comment_post_ID")
+}
+
+model as_fusion_form_entries {
+  id            BigInt   @id @unique(map: "id") @default(autoincrement())
+  submission_id BigInt
+  form_id       BigInt
+  field_id      BigInt
+  value         String?  @mysql.LongText
+  privacy       Boolean?
+  data          String?  @mysql.LongText
+}
+
+model as_fusion_form_fields {
+  id          BigInt  @id @unique(map: "id") @default(autoincrement())
+  form_id     BigInt
+  field_name  String  @mysql.VarChar(256)
+  field_label String? @mysql.VarChar(256)
+  data        String? @mysql.LongText
+}
+
+model as_fusion_form_submissions {
+  id                 BigInt    @id @unique(map: "id") @default(autoincrement())
+  form_id            BigInt
+  time               DateTime  @mysql.DateTime(0)
+  source_url         String    @mysql.VarChar(512)
+  post_id            BigInt?
+  user_id            BigInt?
+  user_agent         String?   @mysql.Text
+  ip                 String?   @mysql.VarChar(512)
+  is_read            Boolean?
+  privacy_scrub_date DateTime? @mysql.Date
+  on_privacy_scrub   String    @mysql.VarChar(20)
+  data               String?   @mysql.LongText
+}
+
+model as_fusion_forms {
+  id                BigInt  @id @unique(map: "id") @default(autoincrement())
+  form_id           BigInt  @unique(map: "form_id")
+  views             BigInt? @default(0)
+  submissions_count BigInt? @default(0)
+  data              String? @mysql.LongText
+}
+
+model as_layerslider {
+  id             Int     @id @default(autoincrement())
+  group_id       Int?
+  author         Int     @default(0)
+  name           String? @default("") @mysql.VarChar(100)
+  slug           String? @default("") @mysql.VarChar(100)
+  data           String  @mysql.MediumText
+  date_c         Int
+  date_m         Int
+  schedule_start Int     @default(0)
+  schedule_end   Int     @default(0)
+  flag_hidden    Boolean @default(false)
+  flag_deleted   Boolean @default(false)
+  flag_popup     Boolean @default(false)
+  flag_group     Boolean @default(false)
+}
+
+model as_layerslider_revisions {
+  id        Int    @id @default(autoincrement())
+  slider_id Int
+  author    Int    @default(0)
+  data      String @mysql.MediumText
+  date_c    Int
+}
+
+model as_links {
+  link_id          BigInt   @id @default(autoincrement()) @mysql.UnsignedBigInt
+  link_url         String   @default("") @mysql.VarChar(255)
+  link_name        String   @default("") @mysql.VarChar(255)
+  link_image       String   @default("") @mysql.VarChar(255)
+  link_target      String   @default("") @mysql.VarChar(25)
+  link_description String   @default("") @mysql.VarChar(255)
+  link_visible     String   @default("Y") @mysql.VarChar(20)
+  link_owner       BigInt   @default(1) @mysql.UnsignedBigInt
+  link_rating      Int      @default(0)
+  link_updated     DateTime @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  link_rel         String   @default("") @mysql.VarChar(255)
+  link_notes       String   @mysql.MediumText
+  link_rss         String   @default("") @mysql.VarChar(255)
+
+  @@index([link_visible], map: "link_visible")
+}
+
+model as_loginizer_logs {
+  username String @default("") @mysql.VarChar(255)
+  time     Int    @default(0)
+  count    Int    @default(0)
+  lockout  Int    @default(0)
+  ip       String @unique(map: "ip") @default("") @mysql.VarChar(255)
+  url      String @default("") @mysql.VarChar(255)
+}
+
+model as_options {
+  option_id    BigInt @id @default(autoincrement()) @mysql.UnsignedBigInt
+  option_name  String @unique(map: "option_name") @default("")
+  option_value String @mysql.LongText
+  autoload     String @default("yes") @mysql.VarChar(20)
+
+  @@index([autoload], map: "autoload")
+}
+
+model as_postmeta {
+  meta_id    BigInt  @id @default(autoincrement()) @mysql.UnsignedBigInt
+  post_id    BigInt  @default(0) @mysql.UnsignedBigInt
+  meta_key   String? @mysql.VarChar(255)
+  meta_value String? @mysql.LongText
+
+  @@index([meta_key(length: 191)], map: "meta_key")
+  @@index([post_id], map: "post_id")
+}
+
+model as_posts {
+  ID                    BigInt   @id @default(autoincrement()) @mysql.UnsignedBigInt
+  post_author           BigInt   @default(0) @mysql.UnsignedBigInt
+  post_date             DateTime @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  post_date_gmt         DateTime @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  post_content          String   @mysql.LongText
+  post_title            String   @mysql.Text
+  post_excerpt          String   @mysql.Text
+  post_status           String   @default("publish") @mysql.VarChar(20)
+  comment_status        String   @default("open") @mysql.VarChar(20)
+  ping_status           String   @default("open") @mysql.VarChar(20)
+  post_password         String   @default("") @mysql.VarChar(255)
+  post_name             String   @default("") @mysql.VarChar(200)
+  to_ping               String   @mysql.Text
+  pinged                String   @mysql.Text
+  post_modified         DateTime @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  post_modified_gmt     DateTime @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  post_content_filtered String   @mysql.LongText
+  post_parent           BigInt   @default(0) @mysql.UnsignedBigInt
+  guid                  String   @default("") @mysql.VarChar(255)
+  menu_order            Int      @default(0)
+  post_type             String   @default("post") @mysql.VarChar(20)
+  post_mime_type        String   @default("") @mysql.VarChar(100)
+  comment_count         BigInt   @default(0)
+
+  @@index([post_author], map: "post_author")
+  @@index([post_name(length: 191)], map: "post_name")
+  @@index([post_parent], map: "post_parent")
+  @@index([post_type, post_status, post_date, ID], map: "type_status_date")
+}
+
+model as_term_relationships {
+  object_id        BigInt @default(0) @mysql.UnsignedBigInt
+  term_taxonomy_id BigInt @default(0) @mysql.UnsignedBigInt
+  term_order       Int    @default(0)
+
+  @@id([object_id, term_taxonomy_id])
+  @@index([term_taxonomy_id], map: "term_taxonomy_id")
+}
+
+model as_term_taxonomy {
+  term_taxonomy_id BigInt @id @default(autoincrement()) @mysql.UnsignedBigInt
+  term_id          BigInt @default(0) @mysql.UnsignedBigInt
+  taxonomy         String @default("") @mysql.VarChar(32)
+  description      String @mysql.LongText
+  parent           BigInt @default(0) @mysql.UnsignedBigInt
+  count            BigInt @default(0)
+
+  @@unique([term_id, taxonomy], map: "term_id_taxonomy")
+  @@index([taxonomy], map: "taxonomy")
+}
+
+model as_termmeta {
+  meta_id    BigInt  @id @default(autoincrement()) @mysql.UnsignedBigInt
+  term_id    BigInt  @default(0) @mysql.UnsignedBigInt
+  meta_key   String? @mysql.VarChar(255)
+  meta_value String? @mysql.LongText
+
+  @@index([meta_key(length: 191)], map: "meta_key")
+  @@index([term_id], map: "term_id")
+}
+
+model as_terms {
+  term_id    BigInt @id @default(autoincrement()) @mysql.UnsignedBigInt
+  name       String @default("") @mysql.VarChar(200)
+  slug       String @default("") @mysql.VarChar(200)
+  term_group BigInt @default(0)
+
+  @@index([name(length: 191)], map: "name")
+  @@index([slug(length: 191)], map: "slug")
+}
+
+model as_tm_taskmeta {
+  meta_id    BigInt  @id @default(autoincrement())
+  task_id    BigInt  @default(0)
+  meta_key   String? @mysql.VarChar(255)
+  meta_value String? @mysql.LongText
+
+  @@index([meta_key(length: 191)], map: "meta_key")
+  @@index([task_id], map: "task_id")
+}
+
+model as_tm_tasks {
+  id               Int      @id @default(autoincrement())
+  user_id          BigInt
+  type             String   @mysql.VarChar(300)
+  class_identifier String?  @default("0") @mysql.VarChar(300)
+  attempts         Int?     @default(0)
+  description      String?  @mysql.VarChar(300)
+  time_created     DateTime @default(now()) @mysql.Timestamp(0)
+  last_locked_at   BigInt?  @default(0)
+  status           String?  @mysql.VarChar(300)
+
+  @@index([user_id], map: "user_id")
+}
+
+model as_usermeta {
+  umeta_id   BigInt  @id @default(autoincrement()) @mysql.UnsignedBigInt
+  user_id    BigInt  @default(0) @mysql.UnsignedBigInt
+  meta_key   String? @mysql.VarChar(255)
+  meta_value String? @mysql.LongText
+
+  @@index([meta_key(length: 191)], map: "meta_key")
+  @@index([user_id], map: "user_id")
+}
+
+model as_users {
+  ID                  BigInt   @id @default(autoincrement()) @mysql.UnsignedBigInt
+  user_login          String   @default("") @mysql.VarChar(60)
+  user_pass           String   @default("") @mysql.VarChar(255)
+  user_nicename       String   @default("") @mysql.VarChar(50)
+  user_email          String   @default("") @mysql.VarChar(100)
+  user_url            String   @default("") @mysql.VarChar(100)
+  user_registered     DateTime @default(dbgenerated("'0000-00-00 00:00:00'")) @mysql.DateTime(0)
+  user_activation_key String   @default("") @mysql.VarChar(255)
+  user_status         Int      @default(0)
+  display_name        String   @default("") @mysql.VarChar(250)
+
+  @@index([user_email], map: "user_email")
+  @@index([user_login], map: "user_login_key")
+  @@index([user_nicename], map: "user_nicename")
+}
+
+model as_wpo_404_detector {
+  ID                Int    @id @default(autoincrement()) @mysql.UnsignedInt
+  url               String @mysql.Text
+  request_timestamp BigInt @mysql.UnsignedBigInt
+  request_count     BigInt @mysql.UnsignedBigInt
+  referrer          String @mysql.Text
+
+  @@unique([url(length: 75), request_timestamp, referrer(length: 75)], map: "url")
+  @@index([request_timestamp, request_count], map: "timestamp_count")
+  @@index([url(length: 75), request_timestamp, referrer(length: 75)], map: "url_timestamp_referrer")
+}
+
+model as_yoast_indexable {
+  id                             Int       @id @default(autoincrement()) @mysql.UnsignedInt
+  permalink                      String?   @mysql.MediumText
+  permalink_hash                 String?   @mysql.VarChar(40)
+  object_id                      BigInt?
+  object_type                    String    @mysql.VarChar(32)
+  object_sub_type                String?   @mysql.VarChar(32)
+  author_id                      BigInt?
+  post_parent                    BigInt?
+  title                          String?   @mysql.Text
+  description                    String?   @mysql.Text
+  breadcrumb_title               String?   @mysql.Text
+  post_status                    String?   @mysql.VarChar(20)
+  is_public                      Boolean?
+  is_protected                   Boolean?  @default(false)
+  has_public_posts               Boolean?
+  number_of_pages                Int?      @mysql.UnsignedInt
+  canonical                      String?   @mysql.MediumText
+  primary_focus_keyword          String?
+  primary_focus_keyword_score    Int?
+  readability_score              Int?
+  is_cornerstone                 Boolean?  @default(false)
+  is_robots_noindex              Boolean?  @default(false)
+  is_robots_nofollow             Boolean?  @default(false)
+  is_robots_noarchive            Boolean?  @default(false)
+  is_robots_noimageindex         Boolean?  @default(false)
+  is_robots_nosnippet            Boolean?  @default(false)
+  twitter_title                  String?   @mysql.Text
+  twitter_image                  String?   @mysql.MediumText
+  twitter_description            String?   @mysql.MediumText
+  twitter_image_id               String?
+  twitter_image_source           String?   @mysql.Text
+  open_graph_title               String?   @mysql.Text
+  open_graph_description         String?   @mysql.MediumText
+  open_graph_image               String?   @mysql.MediumText
+  open_graph_image_id            String?
+  open_graph_image_source        String?   @mysql.Text
+  open_graph_image_meta          String?   @mysql.Text
+  link_count                     Int?
+  incoming_link_count            Int?
+  prominent_words_version        Int?      @mysql.UnsignedInt
+  created_at                     DateTime? @mysql.DateTime(0)
+  updated_at                     DateTime  @default(now()) @mysql.Timestamp(0)
+  blog_id                        BigInt    @default(1)
+  language                       String?   @mysql.VarChar(32)
+  region                         String?   @mysql.VarChar(32)
+  schema_page_type               String?   @mysql.VarChar(64)
+  schema_article_type            String?   @mysql.VarChar(64)
+  has_ancestors                  Boolean?  @default(false)
+  estimated_reading_time_minutes Int?
+  version                        Int?      @default(1)
+  object_last_modified           DateTime? @mysql.DateTime(0)
+  object_published_at            DateTime? @mysql.DateTime(0)
+  inclusive_language_score       Int?
+
+  @@index([object_id, object_type], map: "object_id_and_type")
+  @@index([object_type, object_sub_type], map: "object_type_and_sub_type")
+  @@index([permalink_hash, object_type], map: "permalink_hash_and_object_type")
+  @@index([prominent_words_version, object_type, object_sub_type, post_status], map: "prominent_words")
+  @@index([object_published_at, is_robots_noindex, object_type, object_sub_type], map: "published_sitemap_index")
+  @@index([post_parent, object_type, post_status, object_id], map: "subpages")
+}
+
+model as_yoast_indexable_hierarchy {
+  indexable_id Int    @mysql.UnsignedInt
+  ancestor_id  Int    @mysql.UnsignedInt
+  depth        Int?   @mysql.UnsignedInt
+  blog_id      BigInt @default(1)
+
+  @@id([indexable_id, ancestor_id])
+  @@index([ancestor_id], map: "ancestor_id")
+  @@index([depth], map: "depth")
+  @@index([indexable_id], map: "indexable_id")
+}
+
+model as_yoast_migrations {
+  id      Int     @id @default(autoincrement()) @mysql.UnsignedInt
+  version String? @unique(map: "idx_as_yoast_migrations_version")
+}
+
+model as_yoast_primary_term {
+  id         Int       @id @default(autoincrement()) @mysql.UnsignedInt
+  post_id    BigInt?
+  term_id    BigInt?
+  taxonomy   String    @mysql.VarChar(32)
+  created_at DateTime? @mysql.DateTime(0)
+  updated_at DateTime  @default(now()) @mysql.Timestamp(0)
+  blog_id    BigInt    @default(1)
+
+  @@index([post_id, taxonomy], map: "post_taxonomy")
+  @@index([post_id, term_id], map: "post_term")
+}
+
+model as_yoast_seo_links {
+  id                  BigInt  @id @default(autoincrement()) @mysql.UnsignedBigInt
+  url                 String  @mysql.VarChar(255)
+  post_id             BigInt  @mysql.UnsignedBigInt
+  target_post_id      BigInt  @mysql.UnsignedBigInt
+  type                String  @mysql.VarChar(8)
+  indexable_id        Int?    @mysql.UnsignedInt
+  target_indexable_id Int?    @mysql.UnsignedInt
+  height              Int?    @mysql.UnsignedInt
+  width               Int?    @mysql.UnsignedInt
+  size                Int?    @mysql.UnsignedInt
+  language            String? @mysql.VarChar(32)
+  region              String? @mysql.VarChar(32)
+
+  @@index([indexable_id, type], map: "indexable_link_direction")
+  @@index([post_id, type], map: "link_direction")
+}
+
+model as_yoast_seo_meta {
+  object_id           BigInt @unique(map: "object_id") @mysql.UnsignedBigInt
+  internal_link_count Int?   @mysql.UnsignedInt
+  incoming_link_count Int?   @mysql.UnsignedInt
+}

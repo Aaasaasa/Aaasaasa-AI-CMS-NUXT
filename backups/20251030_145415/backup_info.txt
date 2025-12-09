@@ -1,0 +1,20 @@
+Backup Information
+==================
+Date: Do 30. Okt 14:54:16 CET 2025
+Timestamp: 20251030_145415
+
+Databases:
+- PostgreSQL: nuxt_pg_cms_db (localhost:5432)
+- MySQL: sta3wp (Docker container)
+
+Files:
+- postgres_nuxt_pg_cms_db.dump (PostgreSQL custom format)
+- mysql_sta3wp.sql (MySQL SQL dump)
+
+Restore Commands:
+-----------------
+PostgreSQL:
+  PGPASSWORD=<POSTGRES_PASSWORD> pg_restore -h localhost -p 5432 -U usrcms -d nuxt_pg_cms_db -c postgres_nuxt_pg_cms_db.dump
+
+MySQL:
+  docker exec -i nuxt_mysql mysql -u root -p<MYSQL_PASSWORD> sta3wp < mysql_sta3wp.sql

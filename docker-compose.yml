@@ -1,0 +1,137 @@
+# 🎯 DOCKER PROFILES - Selektive Datenbank-Aktivierung
+#
+# Nur PostgreSQL (Minimum):
+#   docker-compose up -d postgres redis
+#
+# Mit MySQL für WordPress Migration:
+#   docker-compose --profile migration up -d
+#
+# Mit MongoDB für Analytics:
+#   docker-compose --profile analytics up -d
+#
+# Full Stack (alle DBs):
+#   docker-compose --profile migration --profile analytics up -d
+#
+# Oder alles auf einmal:
+#   docker-compose --profile all up -d
+
+services:
+  # ========= Nuxt App =========
+
+  nuxt:
+    profiles: ["all"] # Optional - nur wenn Full Stack gewünscht
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: nuxt_app
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      CHOKIDAR_USEPOLLING: "true"
+      POSTGRES_URL: ${POSTGRES_URL}
+      MYSQL_URL: ${MYSQL_URL}
+      REDIS_URL: ${REDIS_URL}
+      MONGO_URL: ${MONGO_URL}
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    command: ["yarn", "dev"]
+
+  # ========= PostgreSQL (REQUIRED - Always Available) =========
+
+  postgres:
+    image: postgres:17
+    container_name: nuxt_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432" # 👈 host=5432, container=5432
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./.docker/postgres/init:/docker-entrypoint-initdb.d
+
+  # ========= MySQL (OPTIONAL - Only for WordPress Migration) =========
+
+  mysql:
+    profiles: ["migration", "all"] # 👈 Nur mit --profile migration
+    image: mysql:8.3
+    container_name: nuxt_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_NAME}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./.docker/mysql/init:/docker-entrypoint-initdb.d
+
+  # ========= phpMyAdmin (OPTIONAL - Only with MySQL) =========
+
+  phpmyadmin:
+    profiles: ["migration", "all"] # 👈 Nur mit --profile migration
+    image: phpmyadmin:latest
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - mysql
+
+  # ========= Redis (RECOMMENDED - For Caching) =========
+
+  redis:
+    image: redis:7
+    container_name: nuxt_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
+      - ./.docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+
+  # ========= MongoDB (OPTIONAL - Only for Analytics) =========
+
+  mongodb:
+    profiles: ["analytics", "all"] # 👈 Nur mit --profile analytics
+    image: mongo:7
+    container_name: nuxt_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/mongo:/data/db
+      - ./.docker/mongodb/init:/docker-entrypoint-initdb.d
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+
+  # ========= Adminer (OPTIONAL - Database GUI) =========
+
+  adminer:
+    profiles: ["migration", "analytics", "all"] # 👈 Nur wenn DBs aktiv
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+
+  # ========= DuckDB =========
+  #  DuckDB nije service – mountaš lokalni fajl iz .docker/duckdb/
+volumes:
+  postgres_data:
+  mysql_data:
+  redis_data:
+  mongo_data:

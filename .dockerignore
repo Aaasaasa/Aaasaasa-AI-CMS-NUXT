@@ -1,0 +1,10 @@
+node_modules
+.git
+.gitignore
+Dockerfile
+Dockerfile.dev
+yarn-error.log
+dist
+.cache
+data
+.env.local

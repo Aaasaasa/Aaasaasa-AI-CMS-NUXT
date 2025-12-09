@@ -1,0 +1,24 @@
+//prisma/adapters/schema-mongo.prisma
+generator mongo {
+  provider = "prisma-client-js"
+  //previewFeatures = ["postgresqlExtensions"]
+  //output   = "../../node_modules/.prisma/mongo"
+  output   = "../generated/mongo"
+}
+
+datasource mongo {
+  provider = "mongodb"
+  url      = env("MONGO_URL")
+}
+
+model mgArticle {
+  id      String   @id @default(auto()) @map("_id") @mongo.ObjectId
+  title   String
+  body    String?
+  tags    String[]
+  created DateTime @default(now())
+}
+
+// npx prisma generate --schema=prisma/schema-postgres.prisma
+// npx prisma generate --schema=prisma/schema-mysql.prisma
+// npx prisma generate --schema=prisma/schema-mongo.prisma

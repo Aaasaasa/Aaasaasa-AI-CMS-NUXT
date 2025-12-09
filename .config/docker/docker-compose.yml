@@ -1,0 +1,72 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: ../.. # Root vom Repo
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # Nuxt Web
+      - "4000:4000" # Server API
+    environment:
+      NODE_ENV: development
+      POSTGRES_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      MYSQL_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_NAME}
+      MONGO_URL: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongodb:27017/${MONGO_DB}?authSource=admin
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ../..:/app # komplettes Projekt mounten
+      - /app/node_modules # Container-Node-Modules persistent halten
+    depends_on:
+      - postgres
+      - mysql
+      - mongodb
+      - redis
+    command: ["npm", "run", "dev"] # startet turbo → web + server parallel
+
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5433" # change to 5433 to avoid conflict with local postgres
+    volumes:
+      - ../../.docker/postgres/data:/var/lib/postgresql/data
+      - ../../dumps/init_postgres.sql:/docker-entrypoint-initdb.d/00-init.sql
+      - ../../dumps/postgres:/docker-entrypoint-initdb.d/
+
+  mysql:
+    image: mysql:8.3
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_NAME}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ../../.docker/mysql/data:/var/lib/mysql
+      - ../../dumps/wordpress.sql:/docker-entrypoint-initdb.d/00-wp-dump.sql
+      - ../../dumps/mysql:/docker-entrypoint-initdb.d/
+
+  mongodb:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    ports:
+      - "27017:27017"
+    volumes:
+      - ../../.docker/mongodb/data:/data/db
+      - ../../dumps/mongodb:/docker-entrypoint-initdb.d/
+
+  redis:
+    image: redis:7.2
+    ports:
+      - "6379:6379"
+    volumes:
+      - ../../.docker/redis/data:/data

@@ -1,0 +1,63 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./nuxt.config.ts",
+  "description": "Nuxt 4 admin panel sa TailwindCSS i shared modulima",
+  "objasnjenjenje": "Imports subpath za shared, koristi u kodu: import { helper } from '#shared/utils'",
+  "objasnjenjenje_dva": "import { locales } from '#shared/utils/locale.ts'",
+  "imports": {
+    "#shared/*": "../../shared/*"
+  },
+  "author": "Aleksandar Stajic",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nuxt dev --port 3300",
+    "build": "nuxt build",
+    "preview": "nuxt preview",
+    "lint": "eslint . --fix",
+    "format": "prettier --write .",
+    "postinstall": "echo 'Admin postinstall complete'",
+    "prepare:types": "pnpm nuxt prepare"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.69",
+    "@iconify-json/openmoji": "^1.2.17",
+    "@local/shared": "workspace:*",
+    "@nuxt/fonts": "^0.11.4",
+    "@nuxt/icon": "^2.0.0",
+    "@nuxt/image": "^1.11.0",
+    "@nuxt/ui": "^4.0.1",
+    "@nuxtjs/i18n": "^10.1.1",
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "@pinia/nuxt": "^0.11.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-vue-next": "^0.544.0",
+    "nuxt-security": "^2.4.0",
+    "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.5.0",
+    "vue": "^3.5.22",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@nuxt/schema": "^4.1.3",
+    "@nuxtjs/color-mode": "^3.5.2",
+    "@tailwindcss/postcss": "^4.1.14",
+    "@tailwindcss/typography": "^0.5.19",
+    "@vue/test-utils": "^2.4.6",
+    "autoprefixer": "^10.4.21",
+    "nuxt": "^4.1.3",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.14",
+    "tailwindcss-animate": "^1.0.7",
+    "tw-animate-css": "^1.4.0",
+    "vite": "^7.1.9"
+  },
+  "engines": {
+    "node": ">=24.5.0",
+    "pnpm": "^10.18.1"
+  }
+}

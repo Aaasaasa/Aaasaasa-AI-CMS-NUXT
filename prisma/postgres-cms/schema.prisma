@@ -1,0 +1,1186 @@
+// prisma/adapters/schema-postgres.prisma
+//prvo provjeri shemu i onda pokreni instalaciju:
+// pnpm prisma format --schema=prisma/adapters/schema-postgres.prisma
+
+// pnpm prisma db push --schema=prisma/adapters/schema-postgres.prisma
+// prisma/adapters/schema-postgres.prisma
+generator pgCMSClient {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+  output          = "../generated/postgres-cms"
+  //output          = "../../node_modules/.prisma/postgres-cms"
+}
+
+datasource pgCMSdb {
+  provider = "postgresql"
+  url      = env("POSTGRES_CMS_URL")
+}
+
+// --- Enums ---
+enum Role {
+  GUEST
+  SUBSCRIBER
+  CONTRIBUTOR
+  AUTHOR
+  EDITOR
+  ADMIN
+  SUPERADMIN
+  VENDOR // For marketplace vendors
+  CUSTOMER // For customers with orders
+}
+
+enum Status {
+  DRAFT
+  PENDING
+  PUBLISHED
+  ARCHIVED
+  TRASH
+}
+
+enum AddressType {
+  BILLING
+  SHIPPING
+  COMPANY
+  HOME
+  OTHER
+}
+
+enum PaymentProvider {
+  STRIPE
+  PAYPAL
+  KLARNA
+  BANK_TRANSFER
+  CASH_ON_DELIVERY
+  SEPA_DIRECT_DEBIT
+  CREDIT_CARD
+  SOFORT
+  GIROPAY
+  APPLE_PAY
+  GOOGLE_PAY
+}
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+  CANCELLED
+}
+
+enum VendorStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum KYCStatus {
+  NOT_STARTED
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  ON_LEAVE
+  SUSPENDED
+  TERMINATED
+}
+
+enum PermissionScope {
+  GLOBAL // System-wide
+  DEPARTMENT // Department-specific
+  TEAM // Team-specific
+  PERSONAL // Personal only
+}
+
+enum PermissionAction {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  APPROVE
+  PUBLISH
+  EXPORT
+  IMPORT
+  MANAGE
+}
+
+// --- RBAC (Role-Based Access Control) ---
+model Permission {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique // e.g., "posts.create", "users.manage"
+  slug        String           @unique // e.g., "posts-create"
+  description String?
+  resource    String // e.g., "posts", "users", "products"
+  action      PermissionAction
+  scope       PermissionScope  @default(GLOBAL)
+
+  // Metadata
+  isSystem Boolean @default(false) // System permissions can't be deleted
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  roles RolePermission[]
+
+  @@unique([resource, action, scope])
+  @@index([resource])
+  @@index([action])
+  @@map("cms_permissions")
+}
+
+model CustomRole {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique // e.g., "Content Manager", "Sales Representative"
+  slug        String  @unique // e.g., "content-manager"
+  description String?
+  level       Int     @default(0) // Hierarchy level (higher = more power)
+
+  // Metadata
+  isSystem Boolean @default(false) // System roles can't be deleted
+  isActive Boolean @default(true)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  permissions RolePermission[]
+  employees   EmployeeRole[]
+
+  @@index([slug])
+  @@map("cms_custom_roles")
+}
+
+model RolePermission {
+  id           Int @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+
+  // Constraints (optional)
+  conditions Json? // Custom conditions (e.g., only own content)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  // Relations
+  role       CustomRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@map("cms_role_permissions")
+}
+
+// --- Departments & Teams ---
+model Department {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  slug        String  @unique
+  description String?
+  parentId    Int? // For hierarchical departments
+
+  // Metadata
+  isActive Boolean @default(true)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  parent    Department?  @relation("DepartmentHierarchy", fields: [parentId], references: [id])
+  children  Department[] @relation("DepartmentHierarchy")
+  employees Employee[]
+
+  @@index([parentId])
+  @@map("cms_departments")
+}
+
+// --- Employees ---
+model Employee {
+  id           Int    @id @default(autoincrement())
+  userId       Int    @unique
+  employeeCode String @unique // e.g., "EMP001"
+  departmentId Int?
+
+  // Employment Info
+  jobTitle String
+  hireDate DateTime
+  endDate  DateTime?
+  status   EmployeeStatus @default(ACTIVE)
+
+  // Manager Relationship
+  managerId Int? // Who is their manager
+
+  // Contact
+  workEmail String? @unique
+  workPhone String?
+  extension String? // Phone extension
+
+  // Compensation (optional, encrypted in production)
+  salary   Float?
+  currency String? @default("EUR")
+
+  // Metadata
+  bio   String?
+  notes String? // Internal notes
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department   Department?    @relation(fields: [departmentId], references: [id])
+  manager      Employee?      @relation("EmployeeHierarchy", fields: [managerId], references: [id])
+  subordinates Employee[]     @relation("EmployeeHierarchy")
+  roles        EmployeeRole[]
+  workLogs     WorkLog[]
+
+  @@index([userId])
+  @@index([departmentId])
+  @@index([managerId])
+  @@index([employeeCode])
+  @@map("cms_employees")
+}
+
+model EmployeeRole {
+  id         Int @id @default(autoincrement())
+  employeeId Int
+  roleId     Int
+
+  // Scope Restrictions (optional)
+  departmentId Int? // Role only applies to this department
+
+  // Timestamps
+  assignedAt DateTime  @default(now())
+  expiresAt  DateTime? // Optional expiration
+
+  // Relations
+  employee Employee   @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  role     CustomRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, roleId])
+  @@index([employeeId])
+  @@index([roleId])
+  @@map("cms_employee_roles")
+}
+
+// --- Work Logs (Time Tracking) ---
+model WorkLog {
+  id          Int      @id @default(autoincrement())
+  employeeId  Int
+  date        DateTime @default(now())
+  hoursWorked Float // Decimal hours (e.g., 7.5)
+
+  // Details
+  description String?
+  taskType    String? // e.g., "Development", "Meeting", "Support"
+  projectId   Int? // Link to project (if you add projects later)
+
+  // Approval
+  isApproved Boolean   @default(false)
+  approvedBy Int?
+  approvedAt DateTime?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([date])
+  @@map("cms_work_logs")
+}
+
+// --- Users ---
+model User {
+  id       Int    @id @default(autoincrement())
+  login    String @unique
+  email    String @unique
+  password String
+
+  // Personal Information
+  firstName   String?
+  lastName    String?
+  displayName String
+  phone       String?
+  dateOfBirth DateTime?
+
+  // Account
+  role             Role    @default(SUBSCRIBER)
+  isActive         Boolean @default(true)
+  emailVerified    Boolean @default(false)
+  twoFactorEnabled Boolean @default(false)
+
+  // Timestamps
+  registeredAt DateTime  @default(now())
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  metas          UserMeta[]
+  addresses      Address[]
+  articles       Article[]
+  pages          Page[]
+  portfolios     Portfolio[]
+  products       Product[]       @relation("VendorProducts")
+  comments       Comment[]
+  cookieConsents CookieConsent[]
+
+  // Vendor Relations
+  vendorProfile  VendorProfile?
+  paymentMethods PaymentMethod[]
+
+  // Customer Relations
+  orders  Order[]
+  reviews Review[]
+
+  // Employee Relations
+  employee Employee?
+
+  @@map("cms_users")
+}
+
+model UserMeta {
+  id     Int    @id @default(autoincrement())
+  userId Int
+  key    String
+  value  Json
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+  @@map("cms_user_meta")
+}
+
+// --- Addresses (n:n with Users) ---
+model Address {
+  id     Int         @id @default(autoincrement())
+  userId Int
+  type   AddressType @default(BILLING)
+
+  // Address Details
+  firstName  String?
+  lastName   String?
+  company    String?
+  street     String
+  street2    String?
+  city       String
+  state      String?
+  postalCode String
+  country    String // ISO 3166-1 alpha-2 (e.g., "DE", "US")
+
+  // Contact
+  phone String?
+  email String?
+
+  // Metadata
+  isDefault  Boolean @default(false)
+  isVerified Boolean @default(false)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ordersAsBilling  Order[]         @relation("BillingAddress")
+  ordersAsShipping Order[]         @relation("ShippingAddress")
+  vendorProfiles   VendorProfile[]
+
+  @@index([userId])
+  @@map("cms_addresses")
+}
+
+// --- Vendor System ---
+model VendorProfile {
+  id     Int @id @default(autoincrement())
+  userId Int @unique
+
+  // Business Information
+  businessName       String
+  businessType       String? // e.g., "Sole Proprietorship", "LLC", "Corporation"
+  taxId              String? // VAT/Tax ID
+  registrationNumber String?
+
+  // Address
+  businessAddressId Int?
+
+  // Status
+  status    VendorStatus @default(PENDING_VERIFICATION)
+  kycStatus KYCStatus    @default(NOT_STARTED)
+
+  // Verification Documents
+  documentsVerified Boolean   @default(false)
+  verifiedAt        DateTime?
+
+  // Financial
+  commission Float @default(15.0) // Percentage
+
+  // Metadata
+  bio     String?
+  website String?
+  logo    String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessAddress Address?        @relation(fields: [businessAddressId], references: [id])
+  bankAccounts    BankAccount[]
+  payoutSettings  PayoutSettings?
+
+  @@map("cms_vendor_profiles")
+}
+
+// --- Payment Methods ---
+model PaymentMethod {
+  id       Int             @id @default(autoincrement())
+  userId   Int
+  provider PaymentProvider
+
+  // Provider-specific IDs
+  providerId String? // e.g., Stripe Customer ID, PayPal Payer ID
+  methodId   String? // e.g., Stripe Payment Method ID
+
+  // Card Details (encrypted/tokenized)
+  last4       String?
+  brand       String? // e.g., "Visa", "Mastercard"
+  expiryMonth Int?
+  expiryYear  Int?
+
+  // PayPal
+  paypalEmail String?
+
+  // Bank Transfer
+  bankName      String?
+  accountHolder String?
+
+  // Metadata
+  isDefault Boolean @default(false)
+  isActive  Boolean @default(true)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
+
+  @@index([userId])
+  @@map("cms_payment_methods")
+}
+
+// --- Bank Accounts (for Vendors) ---
+model BankAccount {
+  id       Int @id @default(autoincrement())
+  vendorId Int
+
+  // Bank Details
+  bankName      String
+  accountHolder String
+  iban          String?
+  swift         String?
+  accountNumber String? // For non-IBAN countries
+  routingNumber String? // For US banks
+
+  // Verification
+  isVerified Boolean   @default(false)
+  verifiedAt DateTime?
+
+  // Metadata
+  isPrimary Boolean @default(false)
+  currency  String  @default("EUR") // ISO 4217
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  vendor VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId])
+  @@map("cms_bank_accounts")
+}
+
+// --- Payout Settings ---
+model PayoutSettings {
+  id       Int @id @default(autoincrement())
+  vendorId Int @unique
+
+  // Payout Schedule
+  frequency String @default("MONTHLY") // DAILY, WEEKLY, MONTHLY
+  minAmount Float  @default(50.0)
+
+  // Tax Information
+  taxRate   Float?
+  taxExempt Boolean @default(false)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  vendor VendorProfile @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@map("cms_payout_settings")
+}
+
+// --- Orders ---
+model Order {
+  id          Int    @id @default(autoincrement())
+  orderNumber String @unique
+  userId      Int
+
+  // Addresses
+  billingAddressId  Int
+  shippingAddressId Int
+
+  // Payment
+  paymentMethodId Int?
+  paymentProvider PaymentProvider?
+  paymentStatus   PaymentStatus    @default(PENDING)
+
+  // Amounts
+  subtotal Float
+  tax      Float  @default(0)
+  shipping Float  @default(0)
+  discount Float  @default(0)
+  total    Float
+  currency String @default("EUR")
+
+  // Status
+  status String @default("PENDING") // PENDING, PROCESSING, COMPLETED, CANCELLED
+
+  // Metadata
+  notes String?
+
+  // Timestamps
+  paidAt      DateTime?
+  shippedAt   DateTime?
+  deliveredAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  user            User           @relation(fields: [userId], references: [id])
+  billingAddress  Address        @relation("BillingAddress", fields: [billingAddressId], references: [id])
+  shippingAddress Address        @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
+  paymentMethod   PaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+  items           OrderItem[]
+  transactions    Transaction[]
+
+  @@index([userId])
+  @@index([orderNumber])
+  @@map("cms_orders")
+}
+
+model OrderItem {
+  id        Int @id @default(autoincrement())
+  orderId   Int
+  productId Int
+
+  // Product Snapshot (at time of order)
+  productName String
+  sku         String?
+  quantity    Int
+  price       Float
+  tax         Float   @default(0)
+  total       Float
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@map("cms_order_items")
+}
+
+// --- Transactions ---
+model Transaction {
+  id      Int @id @default(autoincrement())
+  orderId Int
+
+  // Transaction Details
+  provider      PaymentProvider
+  transactionId String          @unique // Provider's transaction ID
+  amount        Float
+  currency      String          @default("EUR")
+  status        PaymentStatus
+
+  // Metadata
+  metadata     Json?
+  errorMessage String?
+
+  // Timestamps
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([transactionId])
+  @@map("cms_transactions")
+}
+
+// --- Reviews ---
+model Review {
+  id        Int @id @default(autoincrement())
+  productId Int
+  userId    Int
+
+  // Review Content
+  rating  Int // 1-5 stars
+  title   String?
+  content String
+
+  // Verification
+  isVerified Boolean @default(false) // Verified purchase
+
+  // Moderation
+  isApproved Boolean @default(false)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, userId]) // One review per user per product
+  @@index([productId])
+  @@map("cms_reviews")
+}
+
+// --- Pages ---
+model Page {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  status    Status   @default(DRAFT)
+  authorId  Int
+  parentId  Int?
+  menuOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author       User               @relation(fields: [authorId], references: [id])
+  parent       Page?              @relation("PageHierarchy", fields: [parentId], references: [id])
+  children     Page[]             @relation("PageHierarchy")
+  translations PageTranslation[]
+  metas        PageMeta[]
+  comments     Comment[]
+  terms        TermRelationship[]
+  menuItems    MenuItem[]
+
+  @@map("cms_pages")
+}
+
+model PageTranslation {
+  id      Int     @id @default(autoincrement())
+  pageId  Int
+  lang    String
+  title   String
+  content String
+  excerpt String?
+
+  page Page @relation(fields: [pageId], references: [id])
+
+  @@unique([pageId, lang])
+  @@map("cms_page_translations")
+}
+
+model PageMeta {
+  id     Int    @id @default(autoincrement())
+  pageId Int
+  key    String
+  value  Json
+
+  page    Page   @relation(fields: [pageId], references: [id])
+  Media   Media? @relation(fields: [mediaId], references: [id])
+  mediaId Int?
+
+  @@map("cms_page_meta")
+}
+
+// --- Articles ---
+model Article {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  status    Status   @default(DRAFT)
+  authorId  Int
+  parentId  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author       User                 @relation(fields: [authorId], references: [id])
+  parent       Article?             @relation("ArticleHierarchy", fields: [parentId], references: [id])
+  children     Article[]            @relation("ArticleHierarchy")
+  translations ArticleTranslation[]
+  metas        ArticleMeta[]
+  comments     Comment[]
+  terms        TermRelationship[]
+  menuItems    MenuItem[]
+
+  @@map("cms_articles")
+}
+
+model ArticleTranslation {
+  id        Int     @id @default(autoincrement())
+  articleId Int
+  lang      String
+  title     String
+  content   String
+  excerpt   String?
+
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@unique([articleId, lang])
+  @@map("cms_article_translations")
+}
+
+model ArticleMeta {
+  id        Int    @id @default(autoincrement())
+  articleId Int
+  key       String
+  value     Json
+  mediaId   Int? // For featured_image
+
+  article Article @relation(fields: [articleId], references: [id])
+  Media   Media?  @relation(fields: [mediaId], references: [id])
+
+  @@map("cms_article_meta")
+}
+
+// --- Portfolio ---
+model Portfolio {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  status    Status   @default(DRAFT)
+  authorId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author       User                   @relation(fields: [authorId], references: [id])
+  translations PortfolioTranslation[]
+  metas        PortfolioMeta[]
+  comments     Comment[]
+  terms        TermRelationship[]
+  menuItems    MenuItem[]
+
+  @@map("cms_portfolios")
+}
+
+model PortfolioTranslation {
+  id          Int     @id @default(autoincrement())
+  portfolioId Int
+  lang        String
+  title       String
+  content     String
+  excerpt     String?
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+
+  @@unique([portfolioId, lang])
+  @@map("cms_portfolio_translations")
+}
+
+model PortfolioMeta {
+  id          Int    @id @default(autoincrement())
+  portfolioId Int
+  key         String
+  value       Json
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+  Media     Media?    @relation(fields: [mediaId], references: [id])
+  mediaId   Int?
+
+  @@map("cms_portfolio_meta")
+}
+
+// --- Products ---
+model Product {
+  id   Int     @id @default(autoincrement())
+  slug String  @unique
+  sku  String? @unique
+
+  // Pricing
+  price     Float
+  salePrice Float?
+  currency  String @default("EUR")
+
+  // Inventory
+  stock             Int @default(0)
+  lowStockThreshold Int @default(5)
+
+  // Ownership
+  vendorId Int
+  authorId Int? // Same as vendorId for now, but separates content creator from seller
+
+  // Status
+  isActive   Boolean @default(true)
+  isFeatured Boolean @default(false)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  vendor       User                 @relation("VendorProducts", fields: [vendorId], references: [id])
+  translations ProductTranslation[]
+  metas        ProductMeta[]
+  comments     Comment[]
+  terms        TermRelationship[]
+  orderItems   OrderItem[]
+  reviews      Review[]
+
+  @@map("cms_products")
+}
+
+model ProductTranslation {
+  id          Int    @id @default(autoincrement())
+  productId   Int
+  lang        String
+  title       String
+  description String
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([productId, lang])
+  @@map("cms_product_translations")
+}
+
+model ProductMeta {
+  id        Int    @id @default(autoincrement())
+  productId Int
+  key       String
+  value     Json
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("cms_product_meta")
+}
+
+// --- Comments ---
+model Comment {
+  id          Int      @id @default(autoincrement())
+  userId      Int?
+  pageId      Int?
+  articleId   Int?
+  portfolioId Int?
+  productId   Int?
+  content     String
+  status      String   @default("approved")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user      User?         @relation(fields: [userId], references: [id])
+  page      Page?         @relation(fields: [pageId], references: [id])
+  article   Article?      @relation(fields: [articleId], references: [id])
+  portfolio Portfolio?    @relation(fields: [portfolioId], references: [id])
+  product   Product?      @relation(fields: [productId], references: [id])
+  metas     CommentMeta[]
+
+  @@map("cms_comments")
+}
+
+model CommentMeta {
+  id        Int    @id @default(autoincrement())
+  commentId Int
+  key       String
+  value     Json
+
+  comment Comment @relation(fields: [commentId], references: [id])
+
+  @@map("cms_comment_meta")
+}
+
+// --- Terms & Taxonomies ---
+model Term {
+  id    Int    @id @default(autoincrement())
+  slug  String @unique
+  name  String
+  group Int    @default(0)
+
+  taxonomies TermTaxonomy[]
+
+  @@map("cms_terms")
+}
+
+model TermTaxonomy {
+  id          Int     @id @default(autoincrement())
+  termId      Int
+  taxonomy    String
+  description String?
+  parentId    Int?
+  count       Int     @default(0)
+
+  term          Term               @relation(fields: [termId], references: [id])
+  parent        TermTaxonomy?      @relation("TaxonomyHierarchy", fields: [parentId], references: [id])
+  children      TermTaxonomy[]     @relation("TaxonomyHierarchy")
+  relationships TermRelationship[]
+
+  @@map("cms_term_taxonomies")
+}
+
+model TermRelationship {
+  id             Int  @id @default(autoincrement())
+  articleId      Int?
+  pageId         Int?
+  portfolioId    Int?
+  productId      Int?
+  termTaxonomyId Int
+
+  article      Article?     @relation(fields: [articleId], references: [id])
+  page         Page?        @relation(fields: [pageId], references: [id])
+  portfolio    Portfolio?   @relation(fields: [portfolioId], references: [id])
+  product      Product?     @relation(fields: [productId], references: [id])
+  termTaxonomy TermTaxonomy @relation(fields: [termTaxonomyId], references: [id])
+
+  @@map("cms_term_relationships")
+}
+
+// --- Navigation Menus ---
+model Menu {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique // "main", "footer", "sidebar"
+  location  String // Where the menu appears
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items MenuItem[]
+
+  @@map("Menu")
+}
+
+// --- Cookie Policy ---
+model CookieCategory {
+  id          Int      @id @default(autoincrement())
+  key         String   @unique // essential, analytics, marketing, preferences, etc.
+  name        String
+  description String?
+  required    Boolean  @default(false) // Essential cookies can't be disabled
+  enabled     Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  translations CookieCategoryTranslation[]
+  cookies      Cookie[]
+
+  @@map("cms_cookie_categories")
+}
+
+model CookieCategoryTranslation {
+  id               Int     @id @default(autoincrement())
+  cookieCategoryId Int
+  lang             String
+  name             String
+  description      String?
+
+  category CookieCategory @relation(fields: [cookieCategoryId], references: [id])
+
+  @@unique([cookieCategoryId, lang])
+  @@map("cms_cookie_category_translations")
+}
+
+model Cookie {
+  id         Int      @id @default(autoincrement())
+  categoryId Int
+  name       String // Cookie name
+  domain     String? // .example.com
+  duration   String? // "30 days", "Session", "1 year"
+  purpose    String // What this cookie does
+  provider   String? // Google Analytics, Facebook, etc.
+  enabled    Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  category     CookieCategory      @relation(fields: [categoryId], references: [id])
+  translations CookieTranslation[]
+
+  @@map("cms_cookies")
+}
+
+model CookieTranslation {
+  id       Int     @id @default(autoincrement())
+  cookieId Int
+  lang     String
+  purpose  String
+  provider String?
+
+  cookie Cookie @relation(fields: [cookieId], references: [id])
+
+  @@unique([cookieId, lang])
+  @@map("cms_cookie_translations")
+}
+
+model CookiePolicy {
+  id        Int      @id @default(autoincrement())
+  version   String   @unique // "1.0", "1.1", etc.
+  isActive  Boolean  @default(false)
+  validFrom DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations CookiePolicyTranslation[]
+
+  @@map("cms_cookie_policies")
+}
+
+model CookiePolicyTranslation {
+  id             Int    @id @default(autoincrement())
+  cookiePolicyId Int
+  lang           String
+  title          String
+  content        String // Full policy text
+  bannerText     String // Short banner description
+  acceptText     String @default("Accept All")
+  rejectText     String @default("Reject All")
+  settingsText   String @default("Cookie Settings")
+
+  policy CookiePolicy @relation(fields: [cookiePolicyId], references: [id])
+
+  @@unique([cookiePolicyId, lang])
+  @@map("cms_cookie_policy_translations")
+}
+
+model CookieConsent {
+  id            String   @id @default(cuid()) // Browser fingerprint or user ID
+  userId        Int? // If logged in
+  categories    Json // {"essential": true, "analytics": false, etc.}
+  policyVersion String
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("cms_cookie_consents")
+}
+
+model MenuItem {
+  id       Int     @id @default(autoincrement())
+  menuId   Int
+  parentId Int? // For nested menus
+  title    String
+  url      String? // External URL
+  route    String? // Internal route
+  target   String  @default("_self") // "_blank", "_self"
+  cssClass String?
+  icon     String? // Icon name (e.g., "home", "user")
+  order    Int     @default(0)
+  isActive Boolean @default(true)
+
+  // Content relationships (optional)
+  articleId   Int?
+  pageId      Int?
+  portfolioId Int?
+
+  menu      Menu       @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  parent    MenuItem?  @relation("MenuItemHierarchy", fields: [parentId], references: [id])
+  children  MenuItem[] @relation("MenuItemHierarchy")
+  article   Article?   @relation(fields: [articleId], references: [id])
+  page      Page?      @relation(fields: [pageId], references: [id])
+  portfolio Portfolio? @relation(fields: [portfolioId], references: [id])
+
+  @@map("MenuItem")
+}
+
+// --- Media Library (WordPress Import Compatible) ---
+model Media {
+  id Int @id @default(autoincrement())
+
+  // WordPress Compatibility
+  wpAttachmentId Int? @unique // WordPress post_id from wp_posts
+
+  // File Info
+  filename String
+  filePath String // Relative path: e.g., "uploads/2025/10/image.jpg"
+  mimeType String // e.g., "image/jpeg", "application/pdf"
+  fileSize Int? // Bytes
+
+  // Image Metadata (for images)
+  width   Int?
+  height  Int?
+  alt     String? // Alt text for accessibility
+  caption String?
+  title   String?
+
+  // Upload Info
+  uploadedBy Int? // User who uploaded
+  uploadedAt DateTime @default(now())
+
+  // Metadata
+  metadata Json? // EXIF, camera info, etc.
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  sizes          MediaSize[]
+  articleMetas   ArticleMeta[]
+  pageMetas      PageMeta[]
+  portfolioMetas PortfolioMeta[]
+
+  @@index([wpAttachmentId])
+  @@index([filePath])
+  @@index([filename])
+  @@index([mimeType])
+  @@map("cms_media")
+}
+
+model MediaSize {
+  id       Int    @id @default(autoincrement())
+  mediaId  Int
+  sizeName String // e.g., "thumbnail", "medium", "large", "full"
+
+  // Size Info
+  filePath String // Path to this size variant
+  width    Int? // Optional in case WordPress metadata is incomplete
+  height   Int? // Optional in case WordPress metadata is incomplete
+  fileSize Int? // Bytes
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  // Relations
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@unique([mediaId, sizeName])
+  @@index([mediaId])
+  @@index([sizeName])
+  @@map("cms_media_sizes")
+}
+
+// --- Settings ---
+model Setting {
+  key   String @id
+  value Json
+
+  @@map("cms_settings")
+}

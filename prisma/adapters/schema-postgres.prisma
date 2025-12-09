@@ -1,0 +1,609 @@
+// prisma/adapters/schema-postgres.prisma
+//prvo provjeri shemu i onda pokreni instalaciju:
+// pnpm prisma format --schema=prisma/adapters/schema-postgres.prisma
+
+// pnpm prisma db push --schema=prisma/adapters/schema-postgres.prisma
+// prisma/adapters/schema-postgres.prisma
+generator pgCMSClient {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+  output          = "../generated/postgres-cms"
+  // output          = "../../node_modules/.prisma/client/default"
+}
+
+generator pgCMSClientDefault {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+  // output          = "../generated/postgres-cms"
+  output          = "../../node_modules/.prisma/client"
+}
+
+datasource pgCMSdb {
+  provider = "postgresql"
+  url      = env("POSTGRES_CMS_URL")
+}
+
+// --- Enums ---
+enum Role {
+  GUEST
+  SUBSCRIBER
+  CONTRIBUTOR
+  AUTHOR
+  EDITOR
+  ADMIN
+  SUPERADMIN
+}
+
+enum Status {
+  DRAFT
+  PENDING
+  PUBLISHED
+  ARCHIVED
+  TRASH
+}
+
+// --- Users ---
+model User {
+  id           Int      @id @default(autoincrement())
+  login        String   @unique
+  email        String   @unique
+  password     String
+  displayName  String
+  role         Role     @default(SUBSCRIBER)
+  isActive     Boolean  @default(true)
+  registeredAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  metas      UserMeta[]
+  articles   Article[]
+  pages      Page[]
+  portfolios Portfolio[]
+  products   Product[]
+  comments   Comment[]
+
+  // New relations
+  vendor   Vendor?
+  employee Employee?
+  guest    Guest?
+
+  @@map("cms_users")
+}
+
+// --- Vendor profile ---
+model Vendor {
+  id          Int     @id @default(autoincrement())
+  userId      Int     @unique
+  companyName String
+  taxNumber   String?
+  website     String?
+  phone       String?
+  address     String?
+  country     String?
+  logoUrl     String?
+
+  user     User      @relation(fields: [userId], references: [id])
+  products Product[]
+
+  @@map("cms_vendors")
+}
+
+// --- Employee profile ---
+model Employee {
+  id         Int       @id @default(autoincrement())
+  userId     Int       @unique
+  position   String?
+  department String?
+  company    String?
+  phone      String?
+  hireDate   DateTime?
+  salary     Float?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("cms_employees")
+}
+
+// --- Guest profile ---
+model Guest {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  sessionId String?
+  ipAddress String?
+  userAgent String?
+  lastVisit DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("cms_guests")
+}
+
+model UserMeta {
+  id     Int    @id @default(autoincrement())
+  userId Int
+  key    String
+  value  Json
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("cms_user_meta")
+}
+
+// --- Pages ---
+model Page {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  status    Status   @default(DRAFT)
+  authorId  Int
+  parentId  Int?
+  menuOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author       User               @relation(fields: [authorId], references: [id])
+  parent       Page?              @relation("PageHierarchy", fields: [parentId], references: [id])
+  children     Page[]             @relation("PageHierarchy")
+  translations PageTranslation[]
+  metas        PageMeta[]
+  comments     Comment[]
+  terms        TermRelationship[]
+
+  @@map("cms_pages")
+}
+
+model PageTranslation {
+  id      Int     @id @default(autoincrement())
+  pageId  Int
+  lang    String
+  title   String
+  content String
+  excerpt String?
+
+  page Page @relation(fields: [pageId], references: [id])
+
+  @@unique([pageId, lang])
+  @@map("cms_page_translations")
+}
+
+model PageMeta {
+  id     Int    @id @default(autoincrement())
+  pageId Int
+  key    String
+  value  Json
+
+  page Page @relation(fields: [pageId], references: [id])
+
+  @@map("cms_page_meta")
+}
+
+// --- Articles ---
+model Article {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  status    Status   @default(DRAFT)
+  authorId  Int
+  parentId  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author       User                 @relation(fields: [authorId], references: [id])
+  parent       Article?             @relation("ArticleHierarchy", fields: [parentId], references: [id])
+  children     Article[]            @relation("ArticleHierarchy")
+  translations ArticleTranslation[]
+  metas        ArticleMeta[]
+  comments     Comment[]
+  terms        TermRelationship[]
+
+  // Multilingual relations
+  article_en Article_en[]
+  article_de Article_de[]
+  article_sr Article_sr[]
+  article_es Article_es[]
+  article_fr Article_fr[]
+  article_it Article_it[]
+  article_ru Article_ru[]
+
+  @@map("cms_articles")
+}
+
+model ArticleTranslation {
+  id        Int     @id @default(autoincrement())
+  articleId Int
+  lang      String
+  title     String
+  content   String
+  excerpt   String?
+
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@unique([articleId, lang])
+  @@map("cms_article_translations")
+}
+
+model ArticleMeta {
+  id        Int    @id @default(autoincrement())
+  articleId Int
+  key       String
+  value     Json
+
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@map("cms_article_meta")
+}
+
+// --- Portfolio ---
+model Portfolio {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  status    Status   @default(DRAFT)
+  authorId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author       User                   @relation(fields: [authorId], references: [id])
+  translations PortfolioTranslation[]
+  metas        PortfolioMeta[]
+  comments     Comment[]
+  terms        TermRelationship[]
+
+  @@map("cms_portfolios")
+}
+
+model PortfolioTranslation {
+  id          Int     @id @default(autoincrement())
+  portfolioId Int
+  lang        String
+  title       String
+  content     String
+  excerpt     String?
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+
+  @@unique([portfolioId, lang])
+  @@map("cms_portfolio_translations")
+}
+
+model PortfolioMeta {
+  id          Int    @id @default(autoincrement())
+  portfolioId Int
+  key         String
+  value       Json
+
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id])
+
+  @@map("cms_portfolio_meta")
+}
+
+// --- Products ---
+model Product {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  price     Float
+  currency  String   @default("EUR")
+  stock     Int      @default(0)
+  vendorId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vendor        User    @relation(fields: [vendorId], references: [id], map: "cms_products_vendorId_user_fkey")
+  vendorProfile Vendor? @relation(fields: [vendorId], references: [id], map: "cms_products_vendorId_vendor_fkey")
+
+  translations ProductTranslation[]
+  metas        ProductMeta[]
+  comments     Comment[]
+  terms        TermRelationship[]
+
+  // Multilingual relations
+  product_en Product_en[]
+  product_de Product_de[]
+  product_sr Product_sr[]
+  product_es Product_es[]
+  product_fr Product_fr[]
+  product_it Product_it[]
+  product_ru Product_ru[]
+
+  @@map("cms_products")
+}
+
+model ProductTranslation {
+  id          Int    @id @default(autoincrement())
+  productId   Int
+  lang        String
+  title       String
+  description String
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([productId, lang])
+  @@map("cms_product_translations")
+}
+
+model ProductMeta {
+  id        Int    @id @default(autoincrement())
+  productId Int
+  key       String
+  value     Json
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("cms_product_meta")
+}
+
+// --- Multilingual Products (separate tables per language) ---
+
+model Product_en {
+  id          Int     @id @default(autoincrement())
+  productId   Int
+  title       String
+  description String
+  excerpt     String?
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("cms_product_en")
+}
+
+model Product_de {
+  id          Int     @id @default(autoincrement())
+  productId   Int
+  title       String
+  description String
+  excerpt     String?
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("cms_product_de")
+}
+
+model Product_sr {
+  id          Int     @id @default(autoincrement())
+  productId   Int
+  title       String
+  description String
+  excerpt     String?
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("cms_product_sr")
+}
+
+model Product_es {
+  id          Int     @id @default(autoincrement())
+  productId   Int
+  title       String
+  description String
+  excerpt     String?
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("cms_product_es")
+}
+
+model Product_fr {
+  id          Int     @id @default(autoincrement())
+  productId   Int
+  title       String
+  description String
+  excerpt     String?
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("cms_product_fr")
+}
+
+model Product_it {
+  id          Int     @id @default(autoincrement())
+  productId   Int
+  title       String
+  description String
+  excerpt     String?
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("cms_product_it")
+}
+
+model Product_ru {
+  id          Int     @id @default(autoincrement())
+  productId   Int
+  title       String
+  description String
+  excerpt     String?
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("cms_product_ru")
+}
+
+// --- Comments ---
+model Comment {
+  id          Int      @id @default(autoincrement())
+  userId      Int?
+  pageId      Int?
+  articleId   Int?
+  portfolioId Int?
+  productId   Int?
+  content     String
+  status      String   @default("approved")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user      User?         @relation(fields: [userId], references: [id])
+  page      Page?         @relation(fields: [pageId], references: [id])
+  article   Article?      @relation(fields: [articleId], references: [id])
+  portfolio Portfolio?    @relation(fields: [portfolioId], references: [id])
+  product   Product?      @relation(fields: [productId], references: [id])
+  metas     CommentMeta[]
+
+  @@map("cms_comments")
+}
+
+model CommentMeta {
+  id        Int    @id @default(autoincrement())
+  commentId Int
+  key       String
+  value     Json
+
+  comment Comment @relation(fields: [commentId], references: [id])
+
+  @@map("cms_comment_meta")
+}
+
+// --- Terms & Taxonomies ---
+model Term {
+  id    Int    @id @default(autoincrement())
+  slug  String @unique
+  name  String
+  group Int    @default(0)
+
+  taxonomies TermTaxonomy[]
+
+  @@map("cms_terms")
+}
+
+model TermTaxonomy {
+  id          Int     @id @default(autoincrement())
+  termId      Int
+  taxonomy    String
+  description String?
+  parentId    Int?
+  count       Int     @default(0)
+
+  term          Term               @relation(fields: [termId], references: [id])
+  parent        TermTaxonomy?      @relation("TaxonomyHierarchy", fields: [parentId], references: [id])
+  children      TermTaxonomy[]     @relation("TaxonomyHierarchy")
+  relationships TermRelationship[]
+
+  @@map("cms_term_taxonomies")
+}
+
+model TermRelationship {
+  id             Int  @id @default(autoincrement())
+  articleId      Int?
+  pageId         Int?
+  portfolioId    Int?
+  productId      Int?
+  termTaxonomyId Int
+
+  article      Article?     @relation(fields: [articleId], references: [id])
+  page         Page?        @relation(fields: [pageId], references: [id])
+  portfolio    Portfolio?   @relation(fields: [portfolioId], references: [id])
+  product      Product?     @relation(fields: [productId], references: [id])
+  termTaxonomy TermTaxonomy @relation(fields: [termTaxonomyId], references: [id])
+
+  @@map("cms_term_relationships")
+}
+
+// --- Menus ---
+model Menu {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  name      String
+  items     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("cms_menus")
+}
+
+// --- Settings ---
+model Setting {
+  key   String @id
+  value Json
+
+  @@map("cms_settings")
+}
+
+// --- Multilingual Articles (separate tables per language) ---
+
+model Article_en {
+  id        Int     @id @default(autoincrement())
+  articleId Int
+  title     String
+  content   String
+  excerpt   String?
+
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@map("cms_article_en")
+}
+
+model Article_de {
+  id        Int     @id @default(autoincrement())
+  articleId Int
+  title     String
+  content   String
+  excerpt   String?
+
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@map("cms_article_de")
+}
+
+model Article_sr {
+  id        Int     @id @default(autoincrement())
+  articleId Int
+  title     String
+  content   String
+  excerpt   String?
+
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@map("cms_article_sr")
+}
+
+model Article_es {
+  id        Int     @id @default(autoincrement())
+  articleId Int
+  title     String
+  content   String
+  excerpt   String?
+
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@map("cms_article_es")
+}
+
+model Article_fr {
+  id        Int     @id @default(autoincrement())
+  articleId Int
+  title     String
+  content   String
+  excerpt   String?
+
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@map("cms_article_fr")
+}
+
+model Article_it {
+  id        Int     @id @default(autoincrement())
+  articleId Int
+  title     String
+  content   String
+  excerpt   String?
+
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@map("cms_article_it")
+}
+
+model Article_ru {
+  id        Int     @id @default(autoincrement())
+  articleId Int
+  title     String
+  content   String
+  excerpt   String?
+
+  article Article @relation(fields: [articleId], references: [id])
+
+  @@map("cms_article_ru")
+}
+
+// --- Configuration ---
+model Conf {
+  key   String @id
+  value Json
+
+  @@map("cms_conf")
+}

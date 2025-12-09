@@ -1,0 +1,115 @@
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+.docker
+data
+.turbo
+
+# Node dependencies
+node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# --- Database Files ---
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+!prisma/migrations/**/*.sql
+!prisma/adapters/migrations/**/*.sql
+!prisma/postgres-cms/migrations/**/*.sql
+!prisma/mysql/migrations/**/*.sql
+!prisma/mongo/migrations/**/*.sql
+temp_query.sql
+
+# Testing
+coverage
+.nyc_output
+playwright-report
+test-results
+
+# Build
+dist
+build
+
+# Docker
+volumes/
+
+# Misc
+.DS_Store
+Thumbs.db
+
+# Local env files
+.fleet
+
+*.secret
+# --- Data Directories (Database Volumes) ---
+data/
+data/postgres/**
+data/mysql/**
+data/mongo/**
+data/redis/**
+volumes/
+docker-volumes/**/data/
+# Backup files
+*.backup
+*.bak
+*.dump
+*~
+*.swp
+*.swo
+
+# prisma
+prisma/generated
+
+# --- Uploads (außer README) ---
+public/uploads/**/*
+!public/uploads/README.md
+# Ignore all images in uploads
+public/uploads/**/*.jpg
+public/uploads/**/*.jpeg
+public/uploads/**/*.png
+public/uploads/**/*.gif
+public/uploads/**/*.webp
+public/uploads/**/*.svg
+public/uploads/**/*.ico
+# Ignore uploads from WordPress migration years
+public/uploads/2014/**
+public/uploads/2015/**
+public/uploads/2016/**
+public/uploads/2017/**
+public/uploads/2018/**
+public/uploads/2019/**
+public/uploads/2020/**
+public/uploads/2021/**
+public/uploads/2022/**
+public/uploads/2023/**
+public/uploads/2024/**
+public/uploads/2025/**

@@ -1,0 +1,553 @@
+{
+  "actions": {
+    "continueNow": "Jetzt fortfahren",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "loadMore": "Mehr laden",
+    "profile": "Profil",
+    "reset": "Zurücksetzen",
+    "viewPosts": "Artikel anzeigen"
+  },
+  "app": {
+    "description": "Ein einfacher und effizienter Ausgangspunkt",
+    "footer": "Erstellt von Aleksandar Stajic",
+    "name": "Nuxt Boilerplate"
+  },
+  "articleForm": {
+    "actions": {
+      "create": {
+        "autoSaveInfo": "Änderungen werden automatisch gespeichert",
+        "cancel": "Abbrechen",
+        "description": "Füllen Sie die Felder aus, um einen Artikel zu erstellen.",
+        "error": {
+          "message": "Beim Erstellen des Artikels ist ein Fehler aufgetreten",
+          "title": "Artikel konnte nicht erstellt werden"
+        },
+        "loginRequired": "Melden Sie sich an, um einen Artikel zu erstellen",
+        "submit": "Artikel erstellen",
+        "success": {
+          "message": "Ihr Artikel wurde erfolgreich erstellt",
+          "title": "Artikel erfolgreich erstellt"
+        },
+        "title": "Neuen Artikel erstellen"
+      },
+      "delete": {
+        "cancel": "Abbrechen",
+        "confirm": "Löschen",
+        "description": "Sind Sie sicher, dass Sie diesen Artikel löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "error": {
+          "message": "Beim Löschen des Artikels ist ein Fehler aufgetreten",
+          "title": "Artikel konnte nicht gelöscht werden"
+        },
+        "info": "Diese Aktion löscht den Artikel dauerhaft",
+        "success": {
+          "message": "Ihr Artikel wurde erfolgreich gelöscht",
+          "title": "Artikel erfolgreich gelöscht"
+        },
+        "title": "Artikel löschen"
+      },
+      "edit": {
+        "autoSaveInfo": "Änderungen werden automatisch gespeichert",
+        "cancel": "Abbrechen",
+        "description": "Bearbeiten Sie den Inhalt Ihres Artikels.",
+        "error": {
+          "message": "Beim Aktualisieren des Artikels ist ein Fehler aufgetreten",
+          "title": "Artikel konnte nicht aktualisiert werden"
+        },
+        "loginRequired": "Melden Sie sich an, um einen Artikel zu bearbeiten",
+        "save": "Änderungen speichern",
+        "success": {
+          "message": "Ihr Artikel wurde erfolgreich aktualisiert",
+          "title": "Artikel erfolgreich aktualisiert"
+        },
+        "title": "Artikel bearbeiten"
+      }
+    },
+    "analytics": {
+      "characterCount": "Keine Zeichen | {count} Zeichen | {count} Zeichen",
+      "readingTime": "{count} Minute Lesezeit | {count} Minuten Lesezeit",
+      "wordCount": "Keine Wörter | {count} Wort | {count} Wörter"
+    },
+    "badgeLabels": {
+      "length": {
+        "long": "Lang",
+        "medium": "Mittel",
+        "short": "Kurz"
+      }
+    },
+    "error": {
+      "notFound": "Der Artikel wurde nicht gefunden oder wurde gelöscht",
+      "unauthorized": "Sie haben keine Berechtigung für diese Aktion"
+    },
+    "fields": {
+      "content": {
+        "label": "Artikelinhalt",
+        "placeholder": "Schreiben Sie Ihren Artikelinhalt hier",
+        "validation": {
+          "maxLength": "Inhalt darf 1000 Zeichen nicht überschreiten",
+          "minLength": "Inhalt muss mindestens 10 Zeichen enthalten",
+          "required": "Inhalt ist erforderlich"
+        }
+      },
+      "createdAt": {
+        "label": "Erstellt am {date} um {time}"
+      },
+      "title": {
+        "label": "Artikeltitel",
+        "placeholder": "Artikeltitel eingeben",
+        "validation": {
+          "maxLength": "Titel darf 100 Zeichen nicht überschreiten",
+          "minLength": "Titel muss mindestens 3 Zeichen enthalten",
+          "required": "Titel ist erforderlich"
+        }
+      },
+      "updatedAt": {
+        "label": "Geändert am {date} um {time}"
+      }
+    }
+  },
+  "auth": {
+    "forgotPassword": {
+      "backToLogin": "Zurück zur Anmeldung",
+      "cancel": "Abbrechen",
+      "description": "Passwort zurücksetzen",
+      "email": {
+        "label": "E-Mail-Adresse",
+        "placeholder": "E-Mail-Adresse eingeben",
+        "validation": {
+          "invalid": "E-Mail-Adresse ist ungültig",
+          "maxLength": "E-Mail-Adresse darf 254 Zeichen nicht überschreiten",
+          "required": "E-Mail-Adresse ist erforderlich"
+        }
+      },
+      "error": {
+        "generic": "Passwort-Reset-E-Mail konnte nicht gesendet werden",
+        "title": "Fehler",
+        "tooManyRequests": "Zu viele Anfragen. Versuchen Sie es in {minutes}min {seconds}s erneut."
+      },
+      "remembered": "Passwort wieder eingefallen?",
+      "submit": "Reset-Link senden",
+      "subtitle": "Geben Sie Ihre E-Mail-Adresse ein, um einen Reset-Link zu erhalten",
+      "success": {
+        "message": "Wenn die E-Mail-Adresse in unserem System existiert, erhalten Sie in Kürze einen Reset-Link.",
+        "title": "E-Mail gesendet"
+      },
+      "title": "Passwort vergessen"
+    },
+    "login": {
+      "autoSaveInfo": "Ihre Informationen werden sicher verarbeitet",
+      "backToHome": "Zurück zur Startseite",
+      "cancel": "Abbrechen",
+      "didntReceiveEmail": "E-Mail nicht erhalten?",
+      "email": {
+        "label": "E-Mail-Adresse",
+        "placeholder": "E-Mail-Adresse eingeben",
+        "validation": {
+          "invalid": "E-Mail-Adresse ist ungültig",
+          "maxLength": "E-Mail-Adresse darf 254 Zeichen nicht überschreiten",
+          "required": "E-Mail-Adresse ist erforderlich"
+        }
+      },
+      "error": {
+        "emailNotVerified": "Ihre E-Mail ist nicht verifiziert. Überprüfen Sie Ihren Posteingang oder fordern Sie einen neuen Link an.",
+        "invalidCredentials": "Ungültige E-Mail oder Passwort",
+        "title": "Anmeldefehler"
+      },
+      "forgotPassword": "Passwort vergessen?",
+      "noAccount": "Noch kein Konto?",
+      "password": {
+        "label": "Passwort",
+        "placeholder": "Passwort eingeben",
+        "validation": {
+          "maxLength": "Passwort darf 128 Zeichen nicht überschreiten",
+          "minLength": "Passwort muss mindestens 8 Zeichen lang sein",
+          "required": "Passwort ist erforderlich"
+        }
+      },
+      "rateLimit": {
+        "tooManyAttempts": "Zu viele fehlgeschlagene Versuche. Versuchen Sie es in {minutes}min {seconds}s erneut.",
+        "warning": "Letzter Versuch vor Sperrung | {count} Versuch übrig | {count} Versuche übrig"
+      },
+      "register": "Registrieren",
+      "resendVerification": "Verifizierung erneut senden",
+      "submit": "Anmelden",
+      "subtitle": "Melden Sie sich bei Ihrem Konto an",
+      "success": {
+        "message": "Sie sind jetzt angemeldet",
+        "title": "Anmeldung erfolgreich"
+      },
+      "title": "Anmeldung"
+    },
+    "logout": {
+      "success": {
+        "message": "Sie wurden abgemeldet",
+        "title": "Abmeldung erfolgreich"
+      },
+      "title": "Abmelden"
+    },
+    "register": {
+      "autoSaveInfo": "Ihre Informationen werden sicher verarbeitet",
+      "backToHome": "Zurück zur Startseite",
+      "cancel": "Abbrechen",
+      "confirmPassword": {
+        "label": "Passwort bestätigen",
+        "placeholder": "Passwort bestätigen",
+        "validation": {
+          "match": "Passwörter stimmen nicht überein",
+          "required": "Passwortbestätigung ist erforderlich"
+        }
+      },
+      "email": {
+        "label": "E-Mail-Adresse",
+        "placeholder": "E-Mail-Adresse eingeben",
+        "validation": {
+          "invalid": "E-Mail-Adresse ist ungültig",
+          "maxLength": "E-Mail-Adresse darf 254 Zeichen nicht überschreiten",
+          "required": "E-Mail-Adresse ist erforderlich"
+        }
+      },
+      "error": {
+        "emailExists": "Diese E-Mail-Adresse wird bereits verwendet",
+        "generic": "Ein Fehler ist bei der Registrierung aufgetreten",
+        "invalidEmail": "Die E-Mail-Adresse ist ungültig. Bitte überprüfen Sie Ihre Eingabe.",
+        "title": "Registrierungsfehler",
+        "validation": "Ungültige Eingabedaten. Bitte überprüfen Sie Ihre Eingabe."
+      },
+      "hasAccount": "Bereits ein Konto?",
+      "login": "Anmelden",
+      "name": {
+        "label": "Vollständiger Name",
+        "placeholder": "Vollständigen Namen eingeben",
+        "validation": {
+          "maxLength": "Name darf 50 Zeichen nicht überschreiten",
+          "minLength": "Name muss mindestens 2 Zeichen lang sein",
+          "required": "Name ist erforderlich"
+        }
+      },
+      "password": {
+        "label": "Passwort",
+        "placeholder": "Passwort eingeben",
+        "validation": {
+          "maxLength": "Passwort darf 128 Zeichen nicht überschreiten",
+          "minLength": "Passwort muss mindestens 8 Zeichen lang sein",
+          "pattern": "Passwort muss enthalten: 1 Großbuchstabe, 1 Kleinbuchstabe und 1 Zahl",
+          "required": "Passwort ist erforderlich"
+        }
+      },
+      "submit": "Registrieren",
+      "subtitle": "Erstellen Sie Ihr Konto",
+      "success": {
+        "emailSent": "Eine Verifizierungs-E-Mail wurde an {email} gesendet. Überprüfen Sie Ihren Posteingang.",
+        "message": "Eine Verifizierungs-E-Mail wurde an Sie gesendet. Überprüfen Sie Ihren Posteingang.",
+        "title": "Registrierung erfolgreich"
+      },
+      "terms": {
+        "and": "und",
+        "prefix": "Mit der Registrierung stimmen Sie unseren",
+        "privacy": "Datenschutzrichtlinien",
+        "terms": "Nutzungsbedingungen"
+      },
+      "title": "Registrierung"
+    },
+    "resendVerification": {
+      "alreadyVerified": "Bereits verifiziert?",
+      "backToLogin": "Zurück zur Anmeldung",
+      "cancel": "Abbrechen",
+      "email": {
+        "label": "E-Mail-Adresse",
+        "placeholder": "E-Mail-Adresse eingeben",
+        "validation": {
+          "invalid": "E-Mail-Adresse ist ungültig",
+          "maxLength": "E-Mail-Adresse darf 254 Zeichen nicht überschreiten",
+          "required": "E-Mail-Adresse ist erforderlich"
+        }
+      },
+      "error": {
+        "alreadyVerified": "Diese E-Mail-Adresse ist bereits verifiziert.",
+        "generic": "Verifizierungs-E-Mail konnte nicht gesendet werden",
+        "title": "Fehler",
+        "tooManyRequests": "Zu viele Anfragen. Versuchen Sie es in {minutes}min {seconds}s erneut.",
+        "userNotFound": "Kein Konto mit dieser E-Mail-Adresse gefunden."
+      },
+      "submit": "E-Mail erneut senden",
+      "subtitle": "Geben Sie Ihre E-Mail-Adresse ein, um einen neuen Verifizierungslink zu erhalten",
+      "success": {
+        "message": "Eine neue Verifizierungs-E-Mail wurde gesendet, falls ein Konto mit dieser Adresse existiert.",
+        "title": "E-Mail gesendet"
+      },
+      "title": "Verifizierung erneut senden"
+    },
+    "resetPassword": {
+      "backToLogin": "Zurück zur Anmeldung",
+      "cancel": "Abbrechen",
+      "confirmPassword": {
+        "label": "Passwort bestätigen",
+        "placeholder": "Neues Passwort bestätigen",
+        "validation": {
+          "match": "Passwörter stimmen nicht überein",
+          "required": "Passwortbestätigung ist erforderlich"
+        }
+      },
+      "description": "Wählen Sie ein neues Passwort",
+      "error": {
+        "generic": "Passwort konnte nicht zurückgesetzt werden",
+        "invalidToken": "Dieser Reset-Link ist ungültig oder abgelaufen.",
+        "title": "Fehler"
+      },
+      "password": {
+        "label": "Neues Passwort",
+        "placeholder": "Neues Passwort eingeben",
+        "validation": {
+          "maxLength": "Passwort darf 128 Zeichen nicht überschreiten",
+          "minLength": "Passwort muss mindestens 8 Zeichen lang sein",
+          "pattern": "Passwort muss enthalten: 1 Großbuchstabe, 1 Kleinbuchstabe und 1 Zahl",
+          "required": "Passwort ist erforderlich"
+        }
+      },
+      "remembered": "Passwort wieder eingefallen?",
+      "submit": "Passwort zurücksetzen",
+      "subtitle": "Geben Sie Ihr neues Passwort ein",
+      "success": {
+        "loginButton": "Anmelden",
+        "message": "Ihr Passwort wurde erfolgreich zurückgesetzt. Sie können sich jetzt anmelden.",
+        "title": "Passwort zurückgesetzt"
+      },
+      "title": "Passwort zurücksetzen",
+      "token": {
+        "validation": {
+          "required": "Token ist erforderlich"
+        }
+      }
+    },
+    "verifyEmail": {
+      "cancel": "Zurück zur Startseite",
+      "error": {
+        "generic": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+        "invalidToken": "Der Verifizierungslink ist ungültig oder beschädigt.",
+        "resendLink": "Neuen Link anfordern",
+        "retry": "Erneut versuchen",
+        "title": "Verifizierung fehlgeschlagen",
+        "tokenExpired": "Dieser Verifizierungslink ist abgelaufen. Bitte fordern Sie einen neuen an.",
+        "tokenNotFound": "Dieser Verifizierungslink existiert nicht oder wurde bereits verwendet.",
+        "validationError": "Die Verifizierungsdaten sind ungültig. Bitte fordern Sie einen neuen Link an."
+      },
+      "loading": {
+        "subtitle": "Bitte warten Sie, während wir Ihre E-Mail-Adresse verifizieren...",
+        "title": "E-Mail wird verifiziert"
+      },
+      "noToken": {
+        "backButton": "Zurück zur Anmeldung",
+        "resendButton": "Neuen Link anfordern",
+        "subtitle": "Sie müssen auf diese Seite über den Link zugreifen, den Sie in Ihrer Verifizierungs-E-Mail erhalten haben.",
+        "title": "Verifizierungslink fehlt"
+      },
+      "success": {
+        "message": "Ihre E-Mail-Adresse wurde verifiziert und Sie sind jetzt angemeldet.",
+        "redirecting": "Automatische Weiterleitung in {seconds} Sekunden...",
+        "subtitle": "Herzlichen Glückwunsch! Ihre E-Mail-Adresse wurde bestätigt und Ihr Konto ist jetzt aktiv.",
+        "title": "E-Mail erfolgreich verifiziert!"
+      },
+      "title": "E-Mail-Verifizierung"
+    }
+  },
+  "error": {
+    "404": {
+      "message": "Die gesuchte Seite existiert nicht.",
+      "title": "Seite nicht gefunden"
+    },
+    "actions": {
+      "back": "Zurück",
+      "home": "Startseite"
+    },
+    "generic": {
+      "message": "Ein unerwarteter Fehler ist aufgetreten.",
+      "title": "Ein Fehler ist aufgetreten"
+    }
+  },
+  "hero": {
+    "modernInterface": "Moderne und intuitive Benutzeroberfläche",
+    "subtitle": "Ein einfacher und effizienter Ausgangspunkt",
+    "title": "Nuxt Boilerplate"
+  },
+  "posts": {
+    "empty": {
+      "subtitle": "Beginnen Sie mit der Erstellung Ihres ersten Artikels.",
+      "title": "Keine Artikel"
+    },
+    "subtitle": "Entdecken und verwalten Sie Ihre Artikelsammlung",
+    "title": "Meine Artikel",
+    "type": "Artikel"
+  },
+  "preferences": {
+    "current": "Aktuelle Konfiguration",
+    "detailLevel": {
+      "compact": "Kompakt",
+      "extended": "Erweitert",
+      "label": "Detailgrad"
+    },
+    "displayMode": {
+      "grid": "Raster",
+      "label": "Anzeigemodus",
+      "list": "Liste"
+    }
+  },
+  "stats": {
+    "title": "Statistiken",
+    "totalPosts": "Gesamt Artikel"
+  },
+  "categories": {
+    "title": "Kategorien",
+    "all": "Alle Artikel",
+    "cached": "Zwischengespeichert"
+  },
+  "articles": {
+    "count": "Kein Artikel | {count} Artikel | {count} Artikel",
+    "noArticles": "Keine Artikel gefunden",
+    "noArticlesInCategory": "Keine Artikel in dieser Kategorie gefunden"
+  },
+  "cache": {
+    "fromRedis": "Aus Cache geladen"
+  },
+  "navigation": {
+    "menu": "Menü",
+    "collapse": "Menü einklappen",
+    "expand": "Menü ausklappen",
+    "home": "Startseite",
+    "blog": "Blog",
+    "portfolio": "Portfolio",
+    "products": "Produkte",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "admin": "Admin",
+    "dashboard": "Dashboard",
+    "posts": "Beiträge",
+    "users": "Benutzer",
+    "backToHome": "Zurück zur Startseite",
+    "previousPage": "Vorherige Seite",
+    "nextPage": "Nächste Seite",
+    "page": "Seite"
+  },
+  "language": {
+    "title": "Sprache",
+    "switchTo": "Wechseln zu {language}"
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Entdecken Sie unsere neuesten Artikel und Einblicke",
+    "readMore": "Weiterlesen",
+    "filter": "Kategorien filtern",
+    "empty": {
+      "title": "Keine Artikel gefunden",
+      "message": "Es sind momentan keine Blogartikel verfügbar.",
+      "backHome": "Zurück zur Startseite"
+    },
+    "error": {
+      "title": "Fehler beim Laden",
+      "message": "Die Blogartikel konnten nicht geladen werden.",
+      "retry": "Erneut versuchen"
+    },
+    "status": {
+      "published": "Veröffentlicht",
+      "draft": "Entwurf",
+      "archived": "Archiviert"
+    }
+  },
+  "article": {
+    "updated": "Aktualisiert am",
+    "backToBlog": "Zurück zum Blog",
+    "goBack": "Zurück",
+    "readMore": "Weiterlesen",
+    "error": {
+      "title": "Artikel nicht gefunden",
+      "message": "Der angeforderte Artikel konnte nicht gefunden werden.",
+      "backToBlog": "Zurück zum Blog"
+    },
+    "notFound": {
+      "title": "Artikel nicht gefunden",
+      "message": "Der Artikel existiert nicht oder wurde entfernt."
+    }
+  },
+  "portfolio": {
+    "title": "Portfolio",
+    "subtitle": "Entdecken Sie unsere Projekte und Arbeiten",
+    "viewProject": "Projekt ansehen",
+    "backToPortfolio": "Zurück zum Portfolio",
+    "goBack": "Zurück",
+    "noContent": "Kein Inhalt verfügbar",
+    "empty": {
+      "title": "Keine Projekte gefunden",
+      "message": "Es sind momentan keine Portfolio-Projekte verfügbar.",
+      "backHome": "Zurück zur Startseite"
+    },
+    "error": {
+      "title": "Fehler beim Laden",
+      "message": "Die Portfolio-Projekte konnten nicht geladen werden.",
+      "retry": "Erneut versuchen",
+      "backToHome": "Zurück zur Startseite",
+      "backToPortfolio": "Zurück zum Portfolio"
+    }
+  },
+  "breadcrumb": {
+    "home": "Startseite",
+    "blog": "Blog",
+    "portfolio": "Portfolio",
+    "shop": "Shop"
+  },
+  "page": {
+    "backToHome": "Zurück zur Startseite",
+    "goBack": "Zurück",
+    "noContent": "Kein Inhalt für diese Seite verfügbar.",
+    "error": {
+      "title": "Seite nicht gefunden",
+      "backToHome": "Zurück zur Startseite"
+    }
+  },
+  "footer": {
+    "createdBy": "Erstellt von",
+    "allRightsReserved": "Alle Rechte vorbehalten",
+    "poweredBy": "Powered by",
+    "developedBy": "Entwickelt von",
+    "madeWith": "Gemacht mit",
+    "inGermany": "in Deutschland"
+  },
+  "product": {
+    "inStock": "Auf Lager",
+    "outOfStock": "Ausverkauft",
+    "stock": "Lager: {count}",
+    "vendor": "Anbieter",
+    "created": "Erstellt",
+    "sku": "Artikelnummer",
+    "currency": "Währung",
+    "addToCart": "In den Warenkorb",
+    "wishlist": "Merkliste",
+    "share": "Teilen",
+    "description": "Produktbeschreibung",
+    "moreProducts": "Weitere Produkte entdecken",
+    "backToShop": "Zurück zum Shop",
+    "error": {
+      "title": "Produkt nicht gefunden",
+      "message": "Das gewünschte Produkt konnte nicht gefunden werden.",
+      "backToShop": "Zurück zum Shop",
+      "backToHome": "Zur Startseite"
+    }
+  },
+  "shop": {
+    "title": "Shop",
+    "productCount": "{count} Produkte verfügbar",
+    "inStock": "Auf Lager",
+    "outOfStock": "Ausverkauft",
+    "stock": "Lager: {count}",
+    "viewProduct": "Ansehen",
+    "addToCart": "In Warenkorb",
+    "empty": {
+      "title": "Keine Produkte verfügbar",
+      "contact": "Kontakt aufnehmen",
+      "backToHome": "Zur Startseite"
+    },
+    "error": {
+      "title": "Shop nicht verfügbar",
+      "message": "Produkte können momentan nicht geladen werden.",
+      "backToHome": "Zur Startseite"
+    }
+  }
+}
