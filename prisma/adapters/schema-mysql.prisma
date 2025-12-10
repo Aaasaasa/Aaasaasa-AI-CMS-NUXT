@@ -1,14 +1,14 @@
 // prisma/adapters/schema-mysql.prisma
 generator mysql {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "binary"
   //previewFeatures = ["postgresqlExtensions"]
   // output   = "../../node_modules/.prisma/mysql"
-  output   = "../generated/mysql"
+  output     = "../generated/mysql"
 }
 
 datasource mysql {
   provider = "mysql"
-  url      = env("MYSQL_URL")
 }
 
 model as_actionscheduler_actions {

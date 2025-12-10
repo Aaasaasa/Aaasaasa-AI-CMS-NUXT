@@ -8,11 +8,13 @@ generator pgCMSClient {
   provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
   output          = "../generated/postgres-cms"
+  engineType      = "binary"
   // output          = "../../node_modules/.prisma/client/default"
 }
 
 generator pgCMSClientDefault {
   provider        = "prisma-client-js"
+  engineType      = "binary"
   previewFeatures = ["postgresqlExtensions"]
   // output          = "../generated/postgres-cms"
   output          = "../../node_modules/.prisma/client"
@@ -20,7 +22,7 @@ generator pgCMSClientDefault {
 
 datasource pgCMSdb {
   provider = "postgresql"
-  url      = env("POSTGRES_CMS_URL")
+  // url      = env("POSTGRES_CMS_URL")
 }
 
 // --- Enums ---

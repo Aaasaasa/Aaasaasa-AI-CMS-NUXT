@@ -1,14 +1,15 @@
 //prisma/adapters/schema-mongo.prisma
 generator mongo {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "binary"
   //previewFeatures = ["postgresqlExtensions"]
   //output   = "../../node_modules/.prisma/mongo"
-  output   = "../generated/mongo"
+  output     = "../generated/mongo"
 }
 
 datasource mongo {
   provider = "mongodb"
-  url      = env("MONGO_URL")
+  // url      = env("MONGO_URL")
 }
 
 model mgArticle {
