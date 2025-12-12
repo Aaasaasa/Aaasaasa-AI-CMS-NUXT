@@ -6,7 +6,8 @@
 
 ### Core Technologies
 
-- **Nuxt 4.1.3** with Vue 3 Composition API and TypeScript ES Modules
+- **Nuxt 4.2.2** with Vue 3 Composition API and TypeScript ES Modules
+- **Prisma 7.1.0** - Multi-Database ORM with datasource configuration via prisma.config.js (no datasource blocks in schemas)
 - **Multi-Database Architecture**: PostgreSQL (CMS), MySQL (WordPress), MongoDB (Analytics)
 - **Yarn Package Management**: Consistent dependency management across environments
 - **Modern Layout System**: AppSidebar and AppFooter with responsive design
@@ -16,12 +17,15 @@
 
 ### Major Features (v1.0.0)
 
+- ✅ **Prisma 7 Configuration**: Datasources configured in prisma.config.js instead of schema files
 - ✅ **Modern Layout Components**: AppSidebar with mobile overlay, AppFooter with author attribution
 - ✅ **CSS Architecture Overhaul**: Eliminated @apply directives, implemented CSS variables
 - ✅ **Multi-Database Prisma Setup**: Separate schemas for CMS, WordPress, Analytics
 - ✅ **Yarn Migration**: Complete migration from mixed npm/pnpm to Yarn
 - ✅ **GitHub Actions CI/CD**: Automated testing, linting, and deployment
 - ✅ **WordPress Integration**: MySQL database support for WP compatibility
+- ✅ **@nuxt/image 2.0.0**: Latest image optimization features
+- ✅ **@nuxt/ui 4.2.1**: Latest UI component library
 
 ## Directory Structure
 
@@ -56,13 +60,20 @@
 │   ├── services/               # Business logic services
 │   └── utils/                  # Server utilities
 │
-├── prisma/                      # Multi-Database Configuration (NEW v1.0)
-│   ├── schema.prisma           # Main PostgreSQL CMS schema
-│   ├── mysql/                  # WordPress integration schemas
-│   ├── mongo/                  # Analytics and logging schemas
-│   ├── postgres-cms/           # Extended CMS schemas
+├── prisma/                      # Multi-Database Configuration (Prisma 7)
+│   ├── adapters/               # Schema files (NO datasource blocks - see prisma.config.js)
+│   │   ├── schema-postgres.prisma  # PostgreSQL CMS schema
+│   │   ├── schema-mysql.prisma     # MySQL WordPress schema
+│   │   └── schema-mongo.prisma     # MongoDB Analytics schema
+│   ├── prisma.config.js        # Prisma 7: datasource configuration (replaces datasource blocks)
 │   ├── generated/              # Generated Prisma clients
-│   └── migrations/             # Database migration history
+│   │   ├── postgres-cms/       # PostgreSQL client
+│   │   ├── mysql/              # MySQL client
+│   │   └── mongo/              # MongoDB client
+│   ├── migrations/             # Database migration history
+│   ├── seed-data/              # Seed data files
+│   ├── seed.ts                 # Main seed script
+│   └── seed-menus.ts           # Menu seed script
 │
 ├── i18n/                       # Internationalization
 │   ├── localeDetector.ts       # Smart locale detection
@@ -102,23 +113,32 @@ yarn test:e2e             # Playwright E2E tests only
 yarn test:unit:coverage   # Unit tests with coverage
 ```
 
-### Multi-Database Operations (NEW v1.0)
+### Multi-Database Operations (Prisma 7)
 
 ```bash
 # Start multi-service environment
 docker compose up -d      # PostgreSQL, MySQL, MongoDB, Redis, Adminer
 
-# Database management
+# Prisma 7: Database management
+# Note: datasource URLs are configured in prisma.config.js, not in schema files
 yarn prisma:generate      # Generate all Prisma clients
 yarn prisma:migrate       # Run database migrations
 yarn prisma:studio        # Open Prisma Studio (localhost:5555)
 yarn prisma:reset         # Reset databases (development only)
 yarn db:seed              # Seed with sample data
 
-# Database-specific operations
-yarn prisma generate --schema=prisma/schema.prisma        # PostgreSQL CMS
-yarn prisma generate --schema=prisma/mysql/schema.prisma  # MySQL WordPress
-yarn prisma generate --schema=prisma/mongo/schema.prisma  # MongoDB Analytics
+# Database-specific operations (Prisma 7)
+# Schema files: prisma/adapters/schema-*.prisma
+# Configuration: prisma.config.js
+yarn prisma generate --schema=prisma/adapters/schema-postgres.prisma  # PostgreSQL CMS
+yarn prisma generate --schema=prisma/adapters/schema-mysql.prisma     # MySQL WordPress
+yarn prisma generate --schema=prisma/adapters/schema-mongo.prisma     # MongoDB Analytics
+
+# Database push (sync schema without migrations)
+yarn prisma:push          # Push all schemas
+yarn prisma:push:postgres # PostgreSQL only
+yarn prisma:push:mysql    # MySQL only
+yarn prisma:push:mongo    # MongoDB only
 ```
 
 ### Package Management
@@ -139,14 +159,17 @@ yarn commitlint           # Validate commit messages
 yarn clean                # Clean build artifacts
 ```
 
-## Patterns & Practices (Updated v1.0)
+## Patterns & Practices (Prisma 7 & v1.0)
 
-### Database Patterns
+### Database Patterns (Prisma 7)
 
+- **Prisma 7 Configuration**: No datasource blocks in schema files - all configured in `prisma.config.js`
 - **Multi-Database Architecture**: PostgreSQL (CMS), MySQL (WordPress), MongoDB (Analytics)
-- **Client Singletons**: Separate clients in `server/lib/prisma-*.ts` for each database
+- **Schema Files**: Located in `prisma/adapters/` - schema-postgres.prisma, schema-mysql.prisma, schema-mongo.prisma
+- **Client Singletons**: Separate clients in `server/utils/prismaCms.ts`, `prismaWp.ts`, `prismaMongo.ts`
 - **Service Layer**: Database operations abstracted in `server/services/`
 - **Type Safety**: Full TypeScript integration with generated Prisma clients
+- **Environment Variables**: POSTGRES_CMS_URL, MYSQL_URL, MONGO_URL configured in prisma.config.js
 
 ### Component Architecture
 
@@ -191,22 +214,25 @@ yarn clean                # Clean build artifacts
 - **Route-based**: Prefix-based routing with locale detection
 - **Content Management**: Multi-language content in CMS database
 
-## Environment Variables (Multi-Database v1.0)
+## Environment Variables (Prisma 7 & Multi-Database)
 
-### Core Database Connections
+### Core Database Connections (Prisma 7)
 
 ```bash
-# PostgreSQL CMS (Primary)
-DATABASE_URL="postgresql://user:password@localhost:5432/nuxt_cms"
+# PostgreSQL CMS (Primary) - Used in prisma.config.js
+POSTGRES_CMS_URL="postgresql://user:password@localhost:5432/nuxt_cms"
 
-# MySQL WordPress Integration
-MYSQL_DATABASE_URL="mysql://user:password@localhost:3306/wordpress"
+# MySQL WordPress Integration - Used in prisma.config.js
+MYSQL_URL="mysql://user:password@localhost:3306/wordpress"
 
-# MongoDB Analytics
-MONGODB_DATABASE_URL="mongodb://localhost:27017/analytics"
+# MongoDB Analytics - Used in prisma.config.js
+MONGO_URL="mongodb://localhost:27017/analytics"
 
 # Redis Caching & Sessions
 REDIS_URL="redis://localhost:6379"
+
+# Note: In Prisma 7, datasource URLs are NOT in schema files
+# They are configured in prisma.config.js which reads these environment variables
 ```
 
 ### Security & Authentication
@@ -244,7 +270,7 @@ TEST_MYSQL_URL="mysql://user:password@localhost:3306/test_wp"
 TEST_MONGODB_URL="mongodb://localhost:27017/test_analytics"
 ```
 
-## Development Guidelines (Updated v1.0)
+## Development Guidelines (Prisma 7 & v1.0)
 
 ### Code Standards
 
@@ -252,7 +278,43 @@ TEST_MONGODB_URL="mongodb://localhost:27017/test_analytics"
 - **Vue 3 Composition API**: `<script setup>` syntax with TypeScript
 - **Explicit Layout Imports**: Import AppSidebar/AppFooter explicitly if needed
 - **CSS Variables**: Use CSS custom properties instead of @apply directives
+- **Prisma 7**: No datasource blocks in schema files - configure in prisma.config.js
 - **Multi-Database**: Use appropriate service layer for database operations
+
+### Prisma 7 Schema Guidelines
+
+```prisma
+// ✅ Correct: Prisma 7 - datasource with provider only, no url parameter
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/postgres-cms"
+}
+
+datasource db {
+  provider = "postgresql"
+  // NO url parameter - configured in prisma.config.js instead
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+}
+
+// ✅ Correct: Use @db prefix for native types, not custom datasource names
+model Product {
+  price Decimal @db.Decimal(12, 2)  // ✅ Correct
+}
+
+// ❌ Wrong: Don't use custom datasource prefix or url in schema
+datasource pgCMSdb {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")  // ❌ Error in Prisma 7
+}
+
+model Product {
+  price Decimal @pgCMSdb.Decimal(12, 2)  // ❌ Error
+}
+```
 
 ### Package Management
 
@@ -264,10 +326,11 @@ TEST_MONGODB_URL="mongodb://localhost:27017/test_analytics"
 
 ```bash
 # Conventional commits enforced by Husky
+feat(prisma): upgrade to Prisma 7 with config file
 feat(sidebar): add mobile overlay functionality
 fix(css): resolve bg-background variable conflicts
 docs(readme): update multi-database setup instructions
-chore(deps): upgrade Nuxt to 4.1.3
+chore(deps): upgrade Nuxt to 4.2.2
 ```
 
 ### Component Development
@@ -311,21 +374,51 @@ const route = useRoute()
 }
 ```
 
-### Database Operations
+### Database Operations (Prisma 7)
 
 ```typescript
-// Use service layer pattern
-import { getPostgresClient, getMySQLClient } from '~/server/lib/prisma-utils'
+// Prisma 7: Use singleton client utilities
+import { prismaCms } from '~/server/utils/prismaCms'
+import { prismaWp } from '~/server/utils/prismaWp'
+import { prismaMongo } from '~/server/utils/prismaMongo'
 
 export class ArticleService {
-  private cmsClient = getPostgresClient()
-  private wpClient = getMySQLClient()
-
+  // Access clients via singleton utilities
   async syncWordPressPost(wpId: string) {
-    // Multi-database operation example
+    // Get from WordPress MySQL
+    const wpPost = await prismaWp.as_posts.findUnique({
+      where: { ID: BigInt(wpId) }
+    })
+
+    // Save to PostgreSQL CMS
+    const cmsPost = await prismaCms.post.create({
+      data: {
+        title: wpPost.post_title,
+        content: wpPost.post_content
+        // ... map fields
+      }
+    })
+
+    // Log to MongoDB Analytics
+    await prismaMongo.mgArticle.create({
+      data: {
+        title: 'Migration Log',
+        body: `Synced post ${wpId}`,
+        tags: ['migration', 'wordpress']
+      }
+    })
+
+    return cmsPost
   }
 }
 ```
+
+    // Multi-database operation example
+
+}
+}
+
+````
 
 ## Quick Start Checklist
 
@@ -350,7 +443,7 @@ export class ArticleService {
 ```bash
 PGPASSWORD="<POSTGRES_PASSWORD>" pg_dump -h <POSTGRES_HOST> -U <POSTGRES_USER> -d <POSTGRES_DB> \
   --format=custom --file=/tmp/nuxt_cms_backup_$(date +%Y%m%d_%H%M%S).dump
-```
+````
 
 #### Content-Typen & URL-Struktur
 
@@ -772,3 +865,82 @@ Dies aktualisiert:
 **Claude Context**: This is a production-ready Nuxt 4 theme with modern architecture, created by Aleksandar Stajic. Focus on the multi-database setup, modern layout components, and Yarn-based workflows when assisting with development.
 
 **WICHTIG**: Lies IMMER diese Problem-Lösungen BEVOR du Code änderst! Portfolios sind eigener Content-Typ mit `/our-work/*` URLs!
+
+
+## Prisma 7 Upgrade (10. Dezember 2025)
+
+### Wichtige Änderungen
+
+**Prisma 7.1.0** wurde erfolgreich implementiert mit folgenden Änderungen:
+
+#### Datasource Konfiguration
+
+In Prisma 7 werden Datenbankverbindungen NICHT mehr direkt in den Schema-Dateien konfiguriert:
+
+\`\`\`prisma
+// ✅ Korrekt in Prisma 7 - Schema-Dateien
+datasource db {
+  provider = "postgresql"  // Nur provider, KEIN url Parameter
+}
+
+// ❌ FEHLER in Prisma 7
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")  // Error: url not supported in schema files
+}
+\`\`\`
+
+**URLs werden konfiguriert in**:
+1. \`prisma.config.js\` - Für Migrations und CLI-Befehle
+2. Prisma Client Constructor - Für Runtime-Verbindungen in der App
+
+#### Native Type Attributes
+
+Prisma 7 erfordert den Standard \`@db\` Prefix für native Typen:
+
+\`\`\`prisma
+// ✅ Korrekt
+model Product {
+  price Decimal @db.Decimal(12, 2)
+}
+
+model Article {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}
+
+// ❌ FEHLER - Custom datasource prefixes nicht erlaubt
+model Product {
+  price Decimal @pgCMSdb.Decimal(12, 2)  // Error
+}
+
+model Article {
+  id String @id @default(auto()) @map("_id") @mongo.ObjectId  // Error
+}
+\`\`\`
+
+#### Aktuelle Versionen (10.12.2025)
+
+- **Nuxt**: 4.2.2
+- **Prisma**: 7.1.0
+- **@prisma/client**: 7.1.0
+- **@prisma/adapter-pg**: 7.1.0
+- **@prisma/adapter-mariadb**: 7.1.0
+- **@nuxt/ui**: 4.2.1
+- **@nuxt/image**: 2.0.0
+
+#### Generierte Clients
+
+Alle Prisma Clients wurden neu generiert:
+- ✅ PostgreSQL CMS: \`prisma/generated/postgres-cms\`
+- ✅ MySQL WordPress: \`prisma/generated/mysql\`
+- ✅ MongoDB Analytics: \`prisma/generated/mongo\`
+
+#### Umgebungsvariablen
+
+\`\`\`bash
+# Diese Variablen müssen in .env gesetzt sein
+POSTGRES_CMS_URL="postgresql://user:password@localhost:5432/nuxt_cms"
+MYSQL_URL="mysql://user:password@localhost:3306/wordpress"
+MONGO_URL="mongodb://localhost:27017/analytics"
+\`\`\`
+

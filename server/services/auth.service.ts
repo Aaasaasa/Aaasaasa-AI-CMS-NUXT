@@ -8,7 +8,7 @@ import {
   forbiddenError,
   notFoundError,
   serverError
-} from '~~/server/utils/response'
+} from '~~/server/utils/errors'
 import { createToken, validateAndDeleteToken } from './token.service'
 import { checkTokenRateLimit, checkLoginAttempt, recordLoginAttempt } from './rate-limit.service'
 import { authenticateUser } from './user.service'

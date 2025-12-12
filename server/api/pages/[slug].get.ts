@@ -1,6 +1,7 @@
 // server/api/pages/[slug].get.ts
 import { getPageBySlug } from '../../services/page.service'
-import { createApiResponse, serverError } from '../../utils/response'
+import { createApiResponse } from '../../utils/response'
+import { serverError } from '../../utils/errors'
 
 export default defineEventHandler(async (event) => {
   try {

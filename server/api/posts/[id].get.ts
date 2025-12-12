@@ -2,7 +2,8 @@
 // GET /api/posts/:id - Post Details (supports both ID and slug)
 
 import { getPostById, getPostBySlug } from '../../services/post.service'
-import { createApiResponse, notFoundError } from '../../utils/response'
+import { createApiResponse } from '../../utils/response'
+import { notFoundError } from '../../utils/errors'
 
 export default defineEventHandler(async (event) => {
   try {

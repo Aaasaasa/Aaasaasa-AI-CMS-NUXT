@@ -3,9 +3,9 @@
 // GET /api/dev/db-health
 
 import { defineEventHandler } from 'h3'
-import { PrismaClient as PrismaCmsClient } from '@@/prisma/generated/postgres-cms/index.js'
-import { PrismaClient as PrismaWpClient } from '@@/prisma/generated/mysql'
-import { PrismaClient as PrismaMongoClient } from '@@/prisma/generated/mongo'
+import { PrismaClient as PrismaCmsClient } from '../../../prisma/generated/postgres-cms/client'
+import { PrismaClient as PrismaWpClient } from '../../../prisma/generated/mysql/client'
+import { PrismaClient as PrismaMongoClient } from '../../../prisma/generated/mongo/client'
 
 export default defineEventHandler(async () => {
   const result: Record<string, any> = {}

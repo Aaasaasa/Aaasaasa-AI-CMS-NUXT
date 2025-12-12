@@ -2,7 +2,8 @@
 // DELETE /api/posts/:id - Post löschen
 
 import { deletePost } from '../../services/post.service'
-import { createApiResponse, notFoundError, unauthorizedError } from '../../utils/response'
+import { createApiResponse } from '../../utils/response'
+import { notFoundError, unauthorizedError } from '../../utils/errors'
 
 export default defineEventHandler(async (event) => {
   try {

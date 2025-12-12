@@ -82,90 +82,9 @@ export function createDeletedResponse(): ApiResponse<null> {
 // =============================================================================
 // ERROR HELPER FUNCTIONS
 // =============================================================================
+// Error helpers are defined in ./errors.ts; import directly there to avoid duplicate exports.
 
-/**
- * Throw a bad request error (400)
- * @param code - Error code (defaults to HTTP.BAD_REQUEST)
- * @param message - Override error message
- * @param data - Additional error data
- * @throws {H3Error} Bad request error
- */
-export function badRequestError(
-  code: ErrorCode = ERROR_CODES.HTTP.BAD_REQUEST,
-  message?: string,
-  data?: Partial<ApiErrorData>
-): never {
-  return createApiError(HTTP_STATUS.BAD_REQUEST, code, message, data)
-}
-
-/**
- * Throw an unauthorized error (401)
- * @param code - Error code (defaults to AUTH.UNAUTHORIZED)
- * @param message - Override error message
- * @param data - Additional error data
- * @throws {H3Error} Unauthorized error
- */
-export function unauthorizedError(
-  code: ErrorCode = ERROR_CODES.AUTH.UNAUTHORIZED,
-  message?: string,
-  data?: Partial<ApiErrorData>
-): never {
-  return createApiError(HTTP_STATUS.UNAUTHORIZED, code, message, data)
-}
-
-/**
- * Throw a forbidden error (403)
- * @param code - Error code (defaults to HTTP.FORBIDDEN)
- * @param message - Override error message
- * @param data - Additional error data
- * @throws {H3Error} Forbidden error
- */
-export function forbiddenError(
-  code: ErrorCode = ERROR_CODES.HTTP.FORBIDDEN,
-  message?: string,
-  data?: Partial<ApiErrorData>
-): never {
-  return createApiError(HTTP_STATUS.FORBIDDEN, code, message, data)
-}
-
-/**
- * Throw a not found error (404)
- * @param code - Error code (defaults to HTTP.NOT_FOUND)
- * @param message - Override error message
- * @param data - Additional error data
- * @throws {H3Error} Not found error
- */
-export function notFoundError(
-  code: ErrorCode = ERROR_CODES.HTTP.NOT_FOUND,
-  message?: string,
-  data?: Partial<ApiErrorData>
-): never {
-  return createApiError(HTTP_STATUS.NOT_FOUND, code, message, data)
-}
-
-/**
- * Throw a conflict error (409)
- * @param code - Error code (defaults to HTTP.CONFLICT)
- * @param message - Override error message
- * @param data - Additional error data
- * @throws {H3Error} Conflict error
- */
-export function conflictError(
-  code: ErrorCode = ERROR_CODES.HTTP.CONFLICT,
-  message?: string,
-  data?: Partial<ApiErrorData>
-): never {
-  return createApiError(HTTP_STATUS.CONFLICT, code, message, data)
-}
-
-/**
- * Throw a validation error (422)
- * @param code - Error code (defaults to VALIDATION.ERROR)
- * @param message - Override error message
- * @param field - Field that failed validation
- * @param details - Detailed validation errors
- * @throws {H3Error} Validation error
- */
+// Additional helpers that wrap createApiError and are not provided by errors.ts
 export function validationError(
   code: ErrorCode = ERROR_CODES.VALIDATION.ERROR,
   message?: string,
@@ -178,32 +97,10 @@ export function validationError(
   })
 }
 
-/**
- * Throw a rate limit error (429)
- * @param code - Error code (defaults to RATE_LIMIT.EXCEEDED)
- * @param message - Override error message
- * @param data - Additional error data (retryAfter, remainingAttempts, etc.)
- * @throws {H3Error} Rate limit error
- */
 export function rateLimitError(
   code: ErrorCode = ERROR_CODES.RATE_LIMIT.EXCEEDED,
   message?: string,
   data?: Partial<ApiErrorData>
 ): never {
   return createApiError(HTTP_STATUS.TOO_MANY_REQUESTS, code, message, data)
-}
-
-/**
- * Throw a server error (500)
- * @param code - Error code (defaults to SERVER.INTERNAL_ERROR)
- * @param message - Override error message
- * @param data - Additional error data
- * @throws {H3Error} Internal server error
- */
-export function serverError(
-  code: ErrorCode = ERROR_CODES.SERVER.INTERNAL_ERROR,
-  message?: string,
-  data?: Partial<ApiErrorData>
-): never {
-  return createApiError(HTTP_STATUS.INTERNAL_ERROR, code, message, data)
 }

@@ -1,11 +1,19 @@
 // server/utils/prisma.ts
-// Server-side Prisma Utilities für Multi-Database Setup
+// Server-side Prisma Utilities für Multi-Database Setup (Prisma 7 clients)
+
+import type { PrismaClient as PrismaCmsClient } from '../../prisma/generated/postgres-cms/client'
+import type { PrismaClient as PrismaWpClient } from '../../prisma/generated/mysql/client'
+import type { PrismaClient as PrismaMongoClient } from '../../prisma/generated/mongo/client'
 
 import prismaCms from './prismaCms'
 import prismaWp from './prismaWp'
 import prismaMongo from './prismaMongo'
 
-export async function getPrismaClients() {
+export function getPrismaClients(): {
+  postgres: PrismaCmsClient
+  mysql: PrismaWpClient
+  mongo: PrismaMongoClient
+} {
   return {
     postgres: prismaCms,
     mysql: prismaWp,
@@ -13,14 +21,14 @@ export async function getPrismaClients() {
   }
 }
 
-export async function getPostgresClient() {
+export function getPostgresClient(): PrismaCmsClient {
   return prismaCms
 }
 
-export async function getMySQLClient() {
+export function getMySQLClient(): PrismaWpClient {
   return prismaWp
 }
 
-export async function getMongoClient() {
+export function getMongoClient(): PrismaMongoClient {
   return prismaMongo
 }

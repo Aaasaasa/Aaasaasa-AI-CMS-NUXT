@@ -1,0 +1,12 @@
+# Ignore Docker data directories to prevent permission errors
+.docker/
+data/
+volumes/
+dumps/
+
+# Prisma generated clients (server-only, loaded via utils)
+prisma/generated/
+
+# Development files
+*.log
+.DS_Store

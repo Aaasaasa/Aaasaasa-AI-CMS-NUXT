@@ -1,25 +1,24 @@
-// server/utils/prismaWp.ts - MySQL Legacy Migration Client (Singleton)
+// server/utils/prismaWp.ts - MariaDB Legacy Migration Client (Singleton)
 // Legacy database for WordPress content migration (kept for data import scripts)
+import { PrismaClient as PrismaWpClient } from '../../prisma/generated/mysql/client'
 
-import { PrismaClient as PrismaWpClient } from '@@/prisma/generated/mysql'
+// ...
 
-// Global singleton for hot reload in development
-declare const globalThis: {
-  __prismaWp?: PrismaWpClient
-} & typeof global
-
-const prismaWpClient =
-  globalThis.__prismaWp ||
-  new PrismaWpClient({
-    datasources: {
-      mysql: {
-        url: process.env.MYSQL_URL || process.env.MYSQL_DATABASE_URL
-      }
-    }
-  })
-
-if (process.env.NODE_ENV !== 'production') {
-  globalThis.__prismaWp = prismaWpClient
+const globalForPrisma = globalThis as typeof globalThis & {
+  __prismaWp?: any
 }
 
-export default prismaWpClient
+if (!globalForPrisma.__prismaWp) {
+  // Prisma 7: Direct connection via datasourceUrl (no adapter needed)
+  const datasourceUrl =
+    process.env.MYSQL_URL ||
+    process.env.MYSQL_DATABASE_URL ||
+    'mysql://root:root@localhost:3306/mysql'
+
+  globalForPrisma.__prismaWp = new PrismaWpClient({
+    datasourceUrl,
+  })
+}
+
+const prismaWp = globalForPrisma.__prismaWp!
+export default prismaWp

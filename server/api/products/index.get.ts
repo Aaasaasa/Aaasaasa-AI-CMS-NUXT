@@ -1,6 +1,7 @@
 // server/api/products/index.get.ts
 import { getAllProducts } from '../../services/product.service'
-import { createApiResponse, serverError } from '../../utils/response'
+import { createApiResponse } from '../../utils/response'
+import { serverError } from '../../utils/errors'
 
 export default defineEventHandler(async () => {
   try {

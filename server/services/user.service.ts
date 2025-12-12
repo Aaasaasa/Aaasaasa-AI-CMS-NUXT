@@ -2,7 +2,7 @@ import prisma from '~~/server/utils/prismaCms'
 import type { PublicUser, CreateUserData } from '#shared/models/user'
 import { toPublicUser } from '#shared/models/user'
 import { ERROR_CODES, PRISMA_ERRORS } from '#shared/constants/errors'
-import { conflictError, serverError, unauthorizedError } from '~~/server/utils/response'
+import { conflictError, serverError, unauthorizedError } from '~~/server/utils/errors'
 
 /**
  * User Service - Pure business logic without validation

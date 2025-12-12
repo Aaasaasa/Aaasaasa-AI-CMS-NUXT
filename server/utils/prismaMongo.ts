@@ -1,25 +1,24 @@
 // server/utils/prismaMongo.ts - MongoDB Analytics Client (Singleton)
 // Analytics, logs, session data
+import { createRequire } from 'node:module'
+import { resolve } from 'node:path'
 
-import { PrismaClient as PrismaMongoClient } from '@@/prisma/generated/mongo'
+const require = createRequire(import.meta.url)
+const mongoClientPath = resolve(process.cwd(), 'prisma/generated/mongo/client')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { PrismaClient: PrismaMongoClient } = require(mongoClientPath) as typeof import('../../prisma/generated/mongo/client')
 
 // Global singleton for hot reload in development
 declare const globalThis: {
-  __prismaMongo?: PrismaMongoClient
+  __prismaMongo?: any
 } & typeof global
 
-const prismaMongoClient =
-  globalThis.__prismaMongo ||
-  new PrismaMongoClient({
-    datasources: {
-      mongo: {
-        url: process.env.MONGO_URL || process.env.MONGODB_DATABASE_URL
-      }
-    }
-  })
-
-if (process.env.NODE_ENV !== 'production') {
-  globalThis.__prismaMongo = prismaMongoClient
+if (!globalThis.__prismaMongo) {
+  const client = new PrismaMongoClient()
+  if (process.env.NODE_ENV !== 'production') {
+    globalThis.__prismaMongo = client
+  }
 }
 
+const prismaMongoClient = globalThis.__prismaMongo!
 export default prismaMongoClient

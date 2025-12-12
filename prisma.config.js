@@ -1,7 +1,8 @@
-// Central Prisma config to register all schema locations for multi-database setup
+// prisma.config.js - Prisma 7 Configuration
+import 'dotenv/config'
 import { defineConfig } from '@prisma/config'
 
-// Determine which schema is being acted on so we can route the correct datasource URL
+// Extract --schema or -s from CLI arguments to determine which schema file is being used
 const argv = process.argv
 const schemaArg =
   argv.find((arg) => arg.startsWith('--schema=')) ||
@@ -12,23 +13,35 @@ const schemaArg =
 
 const schemaPath = schemaArg?.replace('--schema=', '')
 
-const datasourceUrl = (() => {
+// Determine the correct database URL based on the schema being used
+const getDatasourceUrl = () => {
   if (schemaPath?.includes('mysql')) {
-    return process.env.MYSQL_URL ?? 'mysql://root:root@localhost:3306/mysql'
+    const url = process.env.MYSQL_URL
+    if (!url) throw new Error('MYSQL_URL environment variable is not set for MySQL schema')
+    return url
   }
+
   if (schemaPath?.includes('mongo')) {
-    return process.env.MONGO_URL ?? 'mongodb://localhost:27017/placeholder'
+    const url = process.env.MONGO_URL
+    if (!url) throw new Error('MONGO_URL environment variable is not set for MongoDB schema')
+    return url
   }
-  return process.env.POSTGRES_CMS_URL ?? 'postgresql://postgres:postgres@localhost:5432/postgres'
-})()
+
+  // Default: PostgreSQL CMS
+  const url = process.env.POSTGRES_CMS_URL
+  if (!url) throw new Error('POSTGRES_CMS_URL environment variable is not set for PostgreSQL CMS schema')
+  return url
+}
 
 export default defineConfig({
+  // Register all schema files
   schemas: [
     './prisma/adapters/schema-postgres.prisma',
     './prisma/adapters/schema-mysql.prisma',
-    './prisma/adapters/schema-mongo.prisma'
+    './prisma/adapters/schema-mongo.prisma',
   ],
+  // Prisma 7: datasource is now configured here instead of in schema files
   datasource: {
-    url: datasourceUrl
-  }
+    url: getDatasourceUrl(),
+  },
 })

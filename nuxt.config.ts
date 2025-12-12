@@ -1,5 +1,6 @@
 /* eslint-disable quotes */
 // nuxt.config.ts
+import { fileURLToPath } from 'node:url'
 import packageJson from './package.json'
 
 export default defineNuxtConfig({
@@ -228,22 +229,26 @@ export default defineNuxtConfig({
       exclude: [
         'server/utils/prismaCms.ts',
         'server/utils/prismaWp.ts',
-        'server/utils/prismaMongo.ts',
-        'server/utils/prisma-utils.ts'
+        'server/utils/prismaMongo.ts'
       ]
     },
     serverAssets: [{ baseName: 'templates', dir: './templates' }],
     rollupConfig: {
       watch: {
-        exclude: ['data/**', '**/node_modules/**']
+        exclude: [
+          'data/**',
+          '.docker/**',
+          '**/node_modules/**'
+        ]
       }
     }
   },
+  // Aliase für shared code und Prisma
   alias: {
-    '@prisma/cms': './prisma/generated/postgres-cms/index.js',
-    '@prisma/mysql': './prisma/generated/mysql/index.js',
-    '@prisma/mongo': './prisma/generated/mongo/index.js'
+    '#shared': fileURLToPath(new URL('./shared', import.meta.url))
   },
+  // Prisma 7: Clients werden nur server-seitig über Utils geladen
+  // Keine Prisma Aliase notwendig - würde zu Import-Fehlern im Frontend führen
   // ========================================
   // Vite Configuration (Frontend only - no Prisma clients)
   // ========================================
@@ -251,7 +256,12 @@ export default defineNuxtConfig({
     build: { chunkSizeWarningLimit: 600 },
     server: {
       watch: {
-        ignored: ['**/data/**', '**/node_modules/**', '**/.nuxt/**']
+        ignored: [
+          '**/data/**',
+          '**/.docker/**',
+          '**/node_modules/**',
+          '**/.nuxt/**'
+        ]
       },
       fs: {
         strict: false

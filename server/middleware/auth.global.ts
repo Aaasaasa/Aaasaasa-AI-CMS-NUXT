@@ -6,7 +6,7 @@
  */
 
 import { ERROR_CODES } from '../constants/errors'
-import { unauthorizedError } from '../utils/response'
+import { unauthorizedError } from '../utils/errors'
 
 export default defineEventHandler(async (event) => {
   const path = event.path || ''

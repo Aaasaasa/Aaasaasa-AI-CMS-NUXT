@@ -1,25 +1,25 @@
-//prisma/adapters/schema-mongo.prisma
+// prisma/adapters/schema-mongo.prisma
+// Prisma 7: datasource configured via prisma.config.js
+// URL is passed to PrismaClient constructor
+// Commands:
+// yarn prisma format --schema=prisma/adapters/schema-mongo.prisma
+// yarn prisma generate --schema=prisma/adapters/schema-mongo.prisma
+// yarn prisma db push --schema=prisma/adapters/schema-mongo.prisma
+
 generator mongo {
-  provider   = "prisma-client-js"
+  provider   = "prisma-client"
   engineType = "binary"
-  //previewFeatures = ["postgresqlExtensions"]
-  //output   = "../../node_modules/.prisma/mongo"
   output     = "../generated/mongo"
 }
 
-datasource mongo {
+datasource db {
   provider = "mongodb"
-  // url      = env("MONGO_URL")
 }
 
 model mgArticle {
-  id      String   @id @default(auto()) @map("_id") @mongo.ObjectId
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
   title   String
   body    String?
   tags    String[]
   created DateTime @default(now())
 }
-
-// npx prisma generate --schema=prisma/schema-postgres.prisma
-// npx prisma generate --schema=prisma/schema-mysql.prisma
-// npx prisma generate --schema=prisma/schema-mongo.prisma

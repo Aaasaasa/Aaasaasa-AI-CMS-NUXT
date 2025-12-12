@@ -2,7 +2,8 @@
 // POST /api/posts - Neuen Post erstellen
 
 import { createPost } from '../../services/post.service'
-import { createApiResponse, badRequestError, unauthorizedError } from '../../utils/response'
+import { createApiResponse } from '../../utils/response'
+import { badRequestError, unauthorizedError } from '../../utils/errors'
 
 export default defineEventHandler(async (event) => {
   try {

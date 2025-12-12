@@ -1,28 +1,28 @@
 // prisma/adapters/schema-postgres.prisma
-//prvo provjeri shemu i onda pokreni instalaciju:
-// pnpm prisma format --schema=prisma/adapters/schema-postgres.prisma
+// Prisma 7: datasource configured via prisma.config.js
+// URL is passed to PrismaClient constructor
+// Commands:
+// yarn prisma format --schema=prisma/adapters/schema-postgres.prisma
+// yarn prisma generate --schema=prisma/adapters/schema-postgres.prisma
+// yarn prisma db push --schema=prisma/adapters/schema-postgres.prisma
 
-// pnpm prisma db push --schema=prisma/adapters/schema-postgres.prisma
-// prisma/adapters/schema-postgres.prisma
 generator pgCMSClient {
-  provider        = "prisma-client-js"
+  provider        = "prisma-client"
   previewFeatures = ["postgresqlExtensions"]
   output          = "../generated/postgres-cms"
   engineType      = "binary"
-  // output          = "../../node_modules/.prisma/client/default"
 }
 
-generator pgCMSClientDefault {
-  provider        = "prisma-client-js"
-  engineType      = "binary"
-  previewFeatures = ["postgresqlExtensions"]
-  // output          = "../generated/postgres-cms"
-  output          = "../../node_modules/.prisma/client"
-}
-
-datasource pgCMSdb {
+/**
+ * generator pgCMSClientDefault {
+ * provider        = "prisma-client-js"
+ * engineType      = "binary"
+ * previewFeatures = ["postgresqlExtensions"]
+ * output          = "../../node_modules/.prisma/client"
+ * }
+ */
+datasource db {
   provider = "postgresql"
-  // url      = env("POSTGRES_CMS_URL")
 }
 
 // --- Enums ---
@@ -280,7 +280,7 @@ model PortfolioMeta {
 model Product {
   id        Int      @id @default(autoincrement())
   slug      String   @unique
-  price     Float
+  price     Decimal  @db.Decimal(12, 2)
   currency  String   @default("EUR")
   stock     Int      @default(0)
   vendorId  Int

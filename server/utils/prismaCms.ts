@@ -1,25 +1,31 @@
-// server/utils/prismaCms.ts - PostgreSQL CMS Client (Singleton)
-// Primary database for all CMS content (posts, pages, users, etc.)
+// server/utils/prismaCms.ts
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
+import { createRequire } from 'node:module'
+import { resolve } from 'node:path'
 
-import { PrismaClient as PrismaCmsClient } from '@@/prisma/generated/postgres-cms/index.js'
+const require = createRequire(import.meta.url)
+const cmsClientPath = resolve(process.cwd(), 'prisma/generated/postgres-cms/client')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { PrismaClient: PrismaCmsClient } = require(cmsClientPath) as typeof import('../../prisma/generated/postgres-cms/client')
 
-// Global singleton for hot reload in development
-declare const globalThis: {
-  __prismaCms?: PrismaCmsClient
-} & typeof global
-
-const prismaCmsClient =
-  globalThis.__prismaCms ||
-  new PrismaCmsClient({
-    datasources: {
-      pgCMSdb: {
-        url: process.env.POSTGRES_CMS_URL || process.env.DATABASE_URL
-      }
-    }
-  })
-
-if (process.env.NODE_ENV !== 'production') {
-  globalThis.__prismaCms = prismaCmsClient
+const globalForPrisma = globalThis as typeof globalThis & {
+  __prismaCms?: any
+  __pgPoolCms?: Pool
 }
 
-export default prismaCmsClient
+if (!globalForPrisma.__prismaCms) {
+  const url = process.env.POSTGRES_CMS_URL || process.env.POSTGRES_URL
+  if (!url) {
+    throw new Error('POSTGRES_CMS_URL ili POSTGRES_URL није постављен за CMS базу')
+  }
+
+  const pool = globalForPrisma.__pgPoolCms ?? new Pool({ connectionString: url })
+  const adapter = new PrismaPg(pool)
+
+  globalForPrisma.__prismaCms = new PrismaCmsClient({ adapter })
+  globalForPrisma.__pgPoolCms = pool
+}
+
+const prismaCms = globalForPrisma.__prismaCms!
+export default prismaCms
