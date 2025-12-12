@@ -1,8 +1,8 @@
 // server/api/categories/index.get.ts - Get all categories with Redis caching
-import { PrismaClient } from '../../../prisma/generated/postgres-cms/client'
+import prismaCms from '../../utils/prismaCms'
 import { createClient } from 'redis'
 
-const pg = new PrismaClient()
+const pg = prismaCms
 
 // Redis Client (wiederverwendbar)
 let redisClient: ReturnType<typeof createClient> | null = null

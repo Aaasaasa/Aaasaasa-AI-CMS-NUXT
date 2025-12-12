@@ -1,24 +1,34 @@
-// server/utils/prismaWp.ts - MariaDB Legacy Migration Client (Singleton)
+// server/utils/prismaWp.ts - MariaDB Legacy Migration Client (Lazy Init)
 // Legacy database for WordPress content migration (kept for data import scripts)
+import { PrismaMariaDb } from '@prisma/adapter-mariadb'
+import mariadb from 'mariadb'
 import { PrismaClient as PrismaWpClient } from '../../prisma/generated/mysql/client'
 
-// ...
+let prismaWpInstance: PrismaWpClient | null = null
+let mariaPool: mariadb.Pool | null = null
 
-const globalForPrisma = globalThis as typeof globalThis & {
-  __prismaWp?: any
+function initPrismaWp(): PrismaWpClient {
+  if (!prismaWpInstance) {
+    const mariaUrl =
+      process.env.MYSQL_URL ||
+      process.env.MYSQL_DATABASE_URL ||
+      'mysql://root:root@localhost:3306/mysql'
+
+    mariaPool = mariadb.createPool(mariaUrl)
+    const adapter = new PrismaMariaDb(mariaUrl)
+
+    prismaWpInstance = new PrismaWpClient({ adapter })
+  }
+
+  return prismaWpInstance
 }
 
-if (!globalForPrisma.__prismaWp) {
-  // Prisma 7: Direct connection via datasourceUrl (no adapter needed)
-  const datasourceUrl =
-    process.env.MYSQL_URL ||
-    process.env.MYSQL_DATABASE_URL ||
-    'mysql://root:root@localhost:3306/mysql'
+// Proxy für Lazy Loading
+const prismaWp = new Proxy({} as PrismaWpClient, {
+  get(target, prop) {
+    const client = initPrismaWp()
+    return client[prop as keyof PrismaWpClient]
+  }
+})
 
-  globalForPrisma.__prismaWp = new PrismaWpClient({
-    datasourceUrl,
-  })
-}
-
-const prismaWp = globalForPrisma.__prismaWp!
 export default prismaWp

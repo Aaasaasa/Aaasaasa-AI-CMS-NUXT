@@ -1,31 +1,33 @@
 // server/utils/prismaCms.ts
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
-import { createRequire } from 'node:module'
-import { resolve } from 'node:path'
+import { PrismaClient as PrismaCmsClient } from '../../prisma/generated/postgres-cms/client'
 
-const require = createRequire(import.meta.url)
-const cmsClientPath = resolve(process.cwd(), 'prisma/generated/postgres-cms/client')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { PrismaClient: PrismaCmsClient } = require(cmsClientPath) as typeof import('../../prisma/generated/postgres-cms/client')
+let prismaCmsInstance: PrismaCmsClient | null = null
+let pgPool: Pool | null = null
 
-const globalForPrisma = globalThis as typeof globalThis & {
-  __prismaCms?: any
-  __pgPoolCms?: Pool
-}
+function initPrismaCms(): PrismaCmsClient {
+  if (!prismaCmsInstance) {
+    const url = process.env.POSTGRES_CMS_URL || process.env.POSTGRES_URL
+    if (!url) {
+      throw new Error('POSTGRES_CMS_URL ili POSTGRES_URL није постављен за CMS базу')
+    }
 
-if (!globalForPrisma.__prismaCms) {
-  const url = process.env.POSTGRES_CMS_URL || process.env.POSTGRES_URL
-  if (!url) {
-    throw new Error('POSTGRES_CMS_URL ili POSTGRES_URL није постављен за CMS базу')
+    pgPool = new Pool({ connectionString: url })
+    const adapter = new PrismaPg(pgPool)
+
+    prismaCmsInstance = new PrismaCmsClient({ adapter })
   }
 
-  const pool = globalForPrisma.__pgPoolCms ?? new Pool({ connectionString: url })
-  const adapter = new PrismaPg(pool)
-
-  globalForPrisma.__prismaCms = new PrismaCmsClient({ adapter })
-  globalForPrisma.__pgPoolCms = pool
+  return prismaCmsInstance
 }
 
-const prismaCms = globalForPrisma.__prismaCms!
+// Proxy für Lazy Loading
+const prismaCms = new Proxy({} as PrismaCmsClient, {
+  get(target, prop) {
+    const client = initPrismaCms()
+    return client[prop as keyof PrismaCmsClient]
+  }
+})
+
 export default prismaCms

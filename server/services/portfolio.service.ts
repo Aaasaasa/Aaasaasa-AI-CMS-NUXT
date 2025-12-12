@@ -38,14 +38,7 @@ export async function getAllPortfolios(): Promise<PortfolioWithAuthor[]> {
           take: 1
         },
         metas: {
-          where: { key: 'featured_image' },
-          include: {
-            Media: {
-              include: {
-                sizes: true
-              }
-            }
-          }
+          where: { key: 'featured_image' }
         }
       },
       orderBy: { createdAt: 'desc' }
@@ -56,10 +49,17 @@ export async function getAllPortfolios(): Promise<PortfolioWithAuthor[]> {
       const translation = portfolio.translations[0] || {}
       const featuredImageMeta = portfolio.metas?.find((m) => m.key === 'featured_image')
 
-      // Build featured image URL from Media relation (capital M)
+      // Extract featured image from JSON value
       let featuredImage = null
-      if (featuredImageMeta?.Media) {
-        featuredImage = featuredImageMeta.Media.filePath
+      if (featuredImageMeta?.value) {
+        try {
+          const value = typeof featuredImageMeta.value === 'string'
+            ? JSON.parse(featuredImageMeta.value)
+            : featuredImageMeta.value
+          featuredImage = value?.filePath || value?.url || value || null
+        } catch {
+          featuredImage = String(featuredImageMeta.value)
+        }
       }
 
       return {
@@ -110,14 +110,7 @@ export async function getPortfolioBySlug(slug: string): Promise<PortfolioWithAut
           take: 1
         },
         metas: {
-          where: { key: 'featured_image' },
-          include: {
-            Media: {
-              include: {
-                sizes: true
-              }
-            }
-          }
+          where: { key: 'featured_image' }
         }
       }
     })
@@ -129,10 +122,17 @@ export async function getPortfolioBySlug(slug: string): Promise<PortfolioWithAut
     const translation = portfolio.translations[0] || {}
     const featuredImageMeta = portfolio.metas?.find((m) => m.key === 'featured_image')
 
-    // Build featured image URL from Media relation (capital M)
+    // Extract featured image from JSON value
     let featuredImage = null
-    if (featuredImageMeta?.Media) {
-      featuredImage = featuredImageMeta.Media.filePath
+    if (featuredImageMeta?.value) {
+      try {
+        const value = typeof featuredImageMeta.value === 'string'
+          ? JSON.parse(featuredImageMeta.value)
+          : featuredImageMeta.value
+        featuredImage = value?.filePath || value?.url || value || null
+      } catch {
+        featuredImage = String(featuredImageMeta.value)
+      }
     }
 
     return {

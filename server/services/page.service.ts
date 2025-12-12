@@ -39,14 +39,7 @@ export async function getAllPages(): Promise<PageWithAuthor[]> {
           take: 1
         },
         metas: {
-          where: { key: 'featured_image' },
-          include: {
-            Media: {
-              include: {
-                sizes: true
-              }
-            }
-          }
+          where: { key: 'featured_image' }
         }
       },
       orderBy: { menuOrder: 'asc' }
@@ -56,10 +49,17 @@ export async function getAllPages(): Promise<PageWithAuthor[]> {
       const translation = page.translations[0] || {}
       const featuredImageMeta = page.metas?.[0]
 
-      // Build featured image URL from Media relation (capital M)
+      // Extract featured image from JSON value
       let featuredImage = null
-      if (featuredImageMeta?.Media) {
-        featuredImage = featuredImageMeta.Media.filePath
+      if (featuredImageMeta?.value) {
+        try {
+          const value = typeof featuredImageMeta.value === 'string'
+            ? JSON.parse(featuredImageMeta.value)
+            : featuredImageMeta.value
+          featuredImage = value?.filePath || value?.url || value || null
+        } catch {
+          featuredImage = String(featuredImageMeta.value)
+        }
       }
 
       return {
@@ -104,14 +104,7 @@ export async function getPageBySlug(slug: string): Promise<PageWithAuthor | null
           take: 1
         },
         metas: {
-          where: { key: 'featured_image' },
-          include: {
-            Media: {
-              include: {
-                sizes: true
-              }
-            }
-          }
+          where: { key: 'featured_image' }
         }
       }
     })
@@ -123,10 +116,17 @@ export async function getPageBySlug(slug: string): Promise<PageWithAuthor | null
     const translation = page.translations[0] || {}
     const featuredImageMeta = page.metas?.[0]
 
-    // Build featured image URL from Media relation (capital M)
+    // Extract featured image from JSON value
     let featuredImage = null
-    if (featuredImageMeta?.Media) {
-      featuredImage = featuredImageMeta.Media.filePath
+    if (featuredImageMeta?.value) {
+      try {
+        const value = typeof featuredImageMeta.value === 'string'
+          ? JSON.parse(featuredImageMeta.value)
+          : featuredImageMeta.value
+        featuredImage = value?.filePath || value?.url || value || null
+      } catch {
+        featuredImage = String(featuredImageMeta.value)
+      }
     }
 
     return {

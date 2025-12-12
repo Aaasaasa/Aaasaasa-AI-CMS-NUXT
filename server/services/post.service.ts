@@ -97,14 +97,7 @@ export async function getAllPosts(): Promise<PostWithAuthor[]> {
           take: 1
         },
         metas: {
-          where: { key: 'featured_image' },
-          include: {
-            Media: {
-              include: {
-                sizes: true
-              }
-            }
-          }
+          where: { key: 'featured_image' }
         }
       },
       orderBy: { createdAt: 'desc' }
@@ -115,14 +108,19 @@ export async function getAllPosts(): Promise<PostWithAuthor[]> {
       const translation = article.translations[0] || {}
       const featuredImageMeta = article.metas?.find((m) => m.key === 'featured_image')
 
-      // Build featured image URL from Media relation (capital M)
+      // Extract featured image URL from JSON value
       let featuredImage = null
-      if (featuredImageMeta?.Media) {
-        const media = featuredImageMeta.Media
-        featuredImage = media.filePath // Use original image path
-        // Optionally, select a specific size:
-        // const mediumSize = media.sizes.find(s => s.sizeName === 'medium')
-        // featuredImage = mediumSize?.filePath || media.filePath
+      if (featuredImageMeta?.value) {
+        // value is JSON, extract the image path
+        try {
+          const value = typeof featuredImageMeta.value === 'string'
+            ? JSON.parse(featuredImageMeta.value)
+            : featuredImageMeta.value
+          featuredImage = value?.filePath || value?.url || value || null
+        } catch {
+          // If not JSON, treat as string
+          featuredImage = String(featuredImageMeta.value)
+        }
       }
 
       return {

@@ -3,7 +3,6 @@
 
 import type { PrismaClient as PrismaCmsClient } from '../../prisma/generated/postgres-cms/client'
 import type { PrismaClient as PrismaWpClient } from '../../prisma/generated/mysql/client'
-import type { PrismaClient as PrismaMongoClient } from '../../prisma/generated/mongo/client'
 
 import prismaCms from './prismaCms'
 import prismaWp from './prismaWp'
@@ -12,7 +11,7 @@ import prismaMongo from './prismaMongo'
 export function getPrismaClients(): {
   postgres: PrismaCmsClient
   mysql: PrismaWpClient
-  mongo: PrismaMongoClient
+  mongo: null
 } {
   return {
     postgres: prismaCms,
@@ -29,6 +28,6 @@ export function getMySQLClient(): PrismaWpClient {
   return prismaWp
 }
 
-export function getMongoClient(): PrismaMongoClient {
+export function getMongoClient(): null {
   return prismaMongo
 }

@@ -3,9 +3,9 @@
 // GET /api/dev/db-health
 
 import { defineEventHandler } from 'h3'
-import { PrismaClient as PrismaCmsClient } from '../../../prisma/generated/postgres-cms/client'
-import { PrismaClient as PrismaWpClient } from '../../../prisma/generated/mysql/client'
-import { PrismaClient as PrismaMongoClient } from '../../../prisma/generated/mongo/client'
+import prismaCms from '../../utils/prismaCms'
+import prismaWp from '../../utils/prismaWp'
+import prismaMongo from '../../utils/prismaMongo'
 
 export default defineEventHandler(async () => {
   const result: Record<string, any> = {}
@@ -16,19 +16,18 @@ export default defineEventHandler(async () => {
   // ========================================
   try {
     const pgStart = Date.now()
-    const prismaCms = new PrismaCmsClient()
 
     // Check connection with simple query
     await prismaCms.$queryRaw`SELECT 1`
 
     // Count main CMS tables
-    const [userCount, articleCount, pageCount, portfolioCount, mediaCount, menuCount] =
+    const [userCount, articleCount, pageCount, portfolioCount, productCount, menuCount] =
       await Promise.all([
         prismaCms.user.count(),
         prismaCms.article.count(),
         prismaCms.page.count(),
         prismaCms.portfolio.count(),
-        prismaCms.media.count(),
+        prismaCms.product.count(),
         prismaCms.menu.count()
       ])
 
@@ -44,7 +43,7 @@ export default defineEventHandler(async () => {
         cms_articles: articleCount,
         cms_pages: pageCount,
         cms_portfolios: portfolioCount,
-        cms_media: mediaCount,
+        cms_products: productCount,
         cms_menus: menuCount
       }
     }
@@ -64,7 +63,6 @@ export default defineEventHandler(async () => {
   // ========================================
   try {
     const mysqlStart = Date.now()
-    const prismaWp = new PrismaWpClient()
 
     // Check connection
     await prismaWp.$queryRaw`SELECT 1`
@@ -104,40 +102,10 @@ export default defineEventHandler(async () => {
   // ========================================
   // MongoDB (OPTIONAL - Analytics)
   // ========================================
-  try {
-    const mongoStart = Date.now()
-    const prismaMongo = new PrismaMongoClient()
-
-    // Check connection
-    await prismaMongo.$queryRaw`{ ping: 1 }`
-
-    // Count users (if schema exists)
-    let userCount = 0
-    try {
-      userCount = await prismaMongo.user.count()
-    } catch {
-      // Model might not exist yet
-    }
-
-    const mongoLatency = Date.now() - mongoStart
-
-    result.mongo = {
-      status: 'connected',
-      latency: mongoLatency,
-      database: 'app_database',
-      url: 'localhost:27017',
-      collections: {
-        users: userCount
-      }
-    }
-  } catch (err: any) {
-    result.mongo = {
-      status: 'warning',
-      error: err.message,
-      database: 'app_database',
-      url: 'localhost:27017',
-      note: 'MongoDB is optional for analytics'
-    }
+  // MongoDB ist derzeit nicht implementiert (nur Placeholder)
+  result.mongo = {
+    status: 'not_implemented',
+    note: 'MongoDB client is a placeholder. Prisma 7 MongoDB support is limited to raw queries only.'
   }
 
   // ========================================

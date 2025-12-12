@@ -1,24 +1,21 @@
-// server/utils/prismaMongo.ts - MongoDB Analytics Client (Singleton)
+// server/utils/prismaMongo.ts - MongoDB Analytics Client (Placeholder)
 // Analytics, logs, session data
-import { createRequire } from 'node:module'
-import { resolve } from 'node:path'
+// NOTE: Prisma 7 MongoDB support is limited to raw queries only
+// This file is kept as preparation for future MongoDB integration
+// For now, use native MongoDB driver or raw queries if needed
 
-const require = createRequire(import.meta.url)
-const mongoClientPath = resolve(process.cwd(), 'prisma/generated/mongo/client')
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { PrismaClient: PrismaMongoClient } = require(mongoClientPath) as typeof import('../../prisma/generated/mongo/client')
+// Placeholder - MongoDB not yet implemented
+export default null
 
-// Global singleton for hot reload in development
-declare const globalThis: {
-  __prismaMongo?: any
-} & typeof global
+// Example of how to use MongoDB with Prisma 7 (raw queries only):
+/*
+import { PrismaClient } from '../../prisma/generated/mongo/client'
 
-if (!globalThis.__prismaMongo) {
-  const client = new PrismaMongoClient()
-  if (process.env.NODE_ENV !== 'production') {
-    globalThis.__prismaMongo = client
-  }
-}
+const prisma = new PrismaClient()
 
-const prismaMongoClient = globalThis.__prismaMongo!
-export default prismaMongoClient
+// Raw query example:
+const result = await prisma.$runCommandRaw({
+  find: 'User',
+  filter: { email: 'user@example.com' }
+})
+*/
